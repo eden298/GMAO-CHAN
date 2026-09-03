@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portail Direction Supérieure - CHAN</title>
+  
+  <link rel="stylesheet" href="superieur.css">
+  <!-- Icônes pour embellir les cases -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- EN-TÊTE DÉDIÉ DIRECTION SUPÉRIEURE -->
+  <header class="header">
+    <div class="header-container">
+      <div>
+        <h1>Portail de Répartition — Direction Supérieure</h1>
+        <p>Centre Hospitalier Abass Ndao — Accès Centralisé aux Services</p>
+      </div>
+      <div class="user-info">
+        <span id="user-display">Direction Supérieure</span>
+        <button id="btn-logout" class="btn-logout">Se Déconnecter</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="welcome-text">
+      <h2>Sélectionnez un service pour accéder à son tableau de bord complet</h2>
+    </div>
+
+    <!-- GRILLE "PUZZLE" DES SERVICES -->
+    <section class="services-grid">
+      
+      <!-- 1. Maintenance Global -->
+      <a href="index.html" class="service-card card-maintenance">
+        <div class="card-icon"><i class="fa-solid fa-wrench"></i></div>
+        <div class="card-content">
+          <h3>Maintenance Générale</h3>
+          <p>Vue d'ensemble analytique, projections data science et suivi global de tous les équipements de l'hôpital.</p>
+        </div>
+        <div class="card-footer">
+          <span>Accéder au Dashboard Global</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 2. Odontologie -->
+      <a href="odonto2.html" class="service-card card-odonto">
+        <div class="card-icon"><i class="fa-solid fa-tooth"></i></div>
+        <div class="card-content">
+          <h3>Odontologie</h3>
+          <p>Suivi des fauteuils dentaires, compresseurs et interventions spécifiques aux soins dentaires.</p>
+        </div>
+        <div class="card-footer">
+          <span>Accéder au Dashboard Odonto</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 3. Urgences -->
+      <a href="urgences.html" class="service-card card-urgences">
+        <div class="card-icon"><i class="fa-solid fa-truck-medical"></i></div>
+        <div class="card-content">
+          <h3>Urgences</h3>
+          <p>Surveillance prioritaire des moniteurs ECG, fluides médicaux et équipements de soins d'urgence.</p>
+        </div>
+        <div class="card-footer">
+          <span>Accéder aux Urgences</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 4. Maternité -->
+      <a href="maternite.html" class="service-card card-maternite">
+        <div class="card-icon"><i class="fa-solid fa-baby"></i></div>
+        <div class="card-content">
+          <h3>Maternité</h3>
+          <p>Gestion des infrastructures du bloc obstétrical, climatisation et équipements de maternité.</p>
+        </div>
+        <div class="card-footer">
+          <span>Accéder à la Maternité</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 5. Pédiatrie -->
+      <a href="pediatrie.html" class="service-card card-pediatrie">
+        <div class="card-icon"><i class="fa-solid fa-child"></i></div>
+        <div class="card-content">
+          <h3>Pédiatrie</h3>
+          <p>Suivi critique des couveuses, tables chauffantes et maintenance du service pédiatrique.</p>
+        </div>
+        <div class="card-footer">
+          <span>Accéder à la Pédiatrie</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 6. Bloc Opératoire -->
+      <a href="bloc.html" class="service-card card-bloc">
+        <div class="card-icon"><i class="fa-solid fa-hospital-user"></i></div>
+        <div class="card-content">
+          <h3>Bloc Opératoire</h3>
+          <p>Contrôle continu des scialytiques, respirateurs et tables d'opération de haute précision.</p>
+        </div>
+        <div class="card-footer">
+          <span>Accéder au Bloc Opératoire</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </a>
+
+    </section>
+  </main>
+
+  <script>
+    // Sécurité de la session
+    const sessionData = JSON.parse(localStorage.getItem('chan_session'));
+
+    // Redirection si non connecté
+    if (!sessionData) {
+        window.location.href = 'login.html';
+    }
+
+    // Bouton Déconnexion
+    document.getElementById('btn-logout').addEventListener('click', () => {
+        localStorage.removeItem('chan_session');
+        window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>

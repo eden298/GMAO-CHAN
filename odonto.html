@@ -1,0 +1,415 @@
+
+<!-- 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Service Odontologie - CHAN</title>
+  
+  <link rel="stylesheet" href="odonto.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- EN-TÊTE DÉDIÉ AU SERVICE --
+  <header class="header">
+    <div class="header-container">
+      <div>
+        <h1>Espace Major — Odontologie</h1>
+        <p>Centre Hospitalier Abass Ndao — Gestion du Service</p>
+      </div>
+      <div class="user-info">
+        <span id="user-display">Connecté...</span>
+        <button id="btn-logout" class="btn-logout">Se Déconnecter</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    
+    <!-- CARTES KPIS SPECIFIQUES ODONTOLOGIE --
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <h3>Total Signalements</h3>
+        <p id="kpi-total" class="kpi-value">0</p>
+      </div>
+      <div class="kpi-card success">
+        <h3>Interventions Résolues</h3>
+        <p id="kpi-resolu" class="kpi-value">0</p>
+      </div>
+      <div class="kpi-card warning">
+        <h3>Pannes En Cours</h3>
+        <p id="kpi-encours" class="kpi-value">0</p>
+      </div>
+    </section>
+
+    <!-- GRAPHIQUE DÉDIÉ --
+    <section class="charts-section">
+      <div class="card">
+        <h2>Répartition des Pannes en Odontologie</h2>
+        <div class="chart-box">
+          <canvas id="chartOdonto"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- REGISTRE DÉDIÉ AU SERVICE --
+    <section class="card">
+      <h2>Pannes Signalées (Odontologie)</h2>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Date</th>
+              <th>Équipement / Type</th>
+              <th>Technicien</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody id="table-odonto">
+            <!-- Rempli dynamiquement --
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="odonto.js" defer></script>
+</body>
+</html>
+-->
+
+
+
+<!--UPDATE PAGE-->
+
+<!--<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Odontologie - Activité Consultations & Soins | CHAN</title>
+    <link rel="stylesheet" href="odonto.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js pour les graphiques --
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- NAV BAR --
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="badge-service">Odontologie</span>
+            <h2>Plateforme CHAN</h2>
+        </div>
+        <div class="nav-user">
+            <div class="user-info">
+                <span id="user-name">Chargement...</span>
+                <small id="user-role">Service Odontologie</small>
+            </div>
+            <button id="btn-logout" class="btn-logout">Déconnexion</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+
+        <!-- HEADER --
+        <header class="dashboard-header">
+            <div>
+                <h1>Registre des Consultations & Actes Dentaires</h1>
+                <p>Suivi de l'activité médicale, des soins dentaires et de la patientèle du service.</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="alert('Fonctionnalité d\'exportation en cours de développement')">
+                    📥 Exporter le Registre
+                </button>
+            </div>
+        </header>
+
+        <!-- KPI CARDS --
+        <section class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon blue">🩺</div>
+                <div class="kpi-data">
+                    <span class="kpi-label">Total Consultations</span>
+                    <h3 id="kpi-total-consultations">0</h3>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon red">🦷</div>
+                <div class="kpi-data">
+                    <span class="kpi-label">Extractions Dentaires</span>
+                    <h3 id="kpi-extractions">0</h3>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon green">✨</div>
+                <div class="kpi-data">
+                    <span class="kpi-label">Obturations / Soins</span>
+                    <h3 id="kpi-soins">0</h3>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon purple">🪥</div>
+                <div class="kpi-data">
+                    <span class="kpi-label">Détartrages & Prévention</span>
+                    <h3 id="kpi-detartrages">0</h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHARTS SECTION --
+        <section class="charts-grid">
+            <div class="chart-card">
+                <h3>Répartition des Actes Dentaires Réalisés</h3>
+                <div class="chart-wrapper">
+                    <canvas id="chartActes"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Répartition des Patients par Sexe</h3>
+                <div class="chart-wrapper">
+                    <canvas id="chartSexe"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- TABLE SECTION --
+        <section class="table-card">
+            <div class="table-header">
+                <h3>Registre des Consultations</h3>
+                <div class="table-controls">
+                    <input type="text" id="search-input" placeholder="Rechercher patient, N° registre, dent..." />
+                    <select id="filter-acte">
+                        <option value="TOUS">Tous les actes</option>
+                        <option value="Extraction">Extraction</option>
+                        <option value="Composite">Composite / Amalgame</option>
+                        <option value="Détartrage">Détartrage</option>
+                        <option value="Consultation">Consultation seule</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>N° Registre</th>
+                            <th>Patient</th>
+                            <th>Âge</th>
+                            <th>Sexe</th>
+                            <th>Dent(s)</th>
+                            <th>Acte(s) Réalisé(s)</th>
+                            <th>Diagnostic / Observation</th>
+                        </tr>
+                    </thead>
+                    <tbody id="registre-tbody">
+                        <!-- Rempli dynamiquement par JS --
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="odonto.js"></script>
+</body>
+</html>-->
+
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Odontologie - Activité Consultations & Soins | CHAN</title>
+    <link rel="stylesheet" href="odonto.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- NAV BAR -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="badge-service">Odontologie</span>
+            <h2>Plateforme CHAN</h2>
+        </div>
+        <div class="nav-user">
+            <div class="user-info">
+                <span id="user-name">Chargement...</span>
+                <small id="user-role">Service Odontologie</small>
+            </div>
+            <button id="btn-logout" class="btn-logout">Déconnexion</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+
+        <!-- HEADER -->
+        <header class="dashboard-header">
+            <div>
+                <h1>Registre des Consultations & Actes Dentaires</h1>
+                <p>Suivi de l'activité médicale, des soins dentaires et de la patientèle du service.</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="alert('Fonctionnalité d\'exportation en cours de développement')">
+                    📥 Exporter le Registre
+                </button>
+            </div>
+        </header>
+
+        <!-- KPI CARDS -->
+        <section class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon blue">🩺</div>
+                <div class="kpi-data">
+                    <span class="kpi-label">Total Consultations</span>
+                    <h3 id="kpi-total-consultations">0</h3>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon red">🦷</div>
+                <div class="kpi-data">
+                    <span class="kpi-label">Extractions Dentaires</span>
+                    <h3 id="kpi-extractions">0</h3>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon green">✨</div>
+                <div class="kpi-data">
+                    <span class="kpi-label">Obturations / Soins</span>
+                    <h3 id="kpi-soins">0</h3>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon purple">🪥</div>
+                <div class="kpi-data">
+                    <span class="kpi-label">Détartrages & Prévention</span>
+                    <h3 id="kpi-detartrages">0</h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHARTS SECTION -->
+        <section class="charts-grid-top">
+            <div class="chart-card full-width">
+                <h3>📈 Évolution Temporelle de la Patientèle (Consultations par Date)</h3>
+                <div class="chart-wrapper">
+                    <canvas id="chartEvolution"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section class="charts-grid">
+            <div class="chart-card">
+                <h3>Répartition des Actes Dentaires Réalisés</h3>
+                <div class="chart-wrapper">
+                    <canvas id="chartActes"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Répartition des Patients par Sexe</h3>
+                <div class="chart-wrapper">
+                    <canvas id="chartSexe"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- TABLE & ADVANCED FILTERS SECTION -->
+        <section class="table-card">
+            <div class="table-header">
+                <h3>Registre des Consultations</h3>
+            </div>
+
+            <!-- BARRE DE FILTRES AVANCÉS -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label>Recherche rapide</label>
+                    <input type="text" id="search-input" placeholder="Patient, N° reg, adresse, dent..." />
+                </div>
+
+                <div class="filter-group">
+                    <label>Période (Du / Au)</label>
+                    <div class="date-inputs">
+                        <input type="date" id="filter-date-start" />
+                        <input type="date" id="filter-date-end" />
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label>Genre</label>
+                    <select id="filter-genre">
+                        <option value="TOUS">Tous</option>
+                        <option value="M">Hommes (M)</option>
+                        <option value="F">Femmes (F)</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Tranche d'âge</label>
+                    <select id="filter-age">
+                        <option value="TOUS">Tous les âges</option>
+                        <option value="enfant">< 18 ans (Enfants)</option>
+                        <option value="jeune">18 - 35 ans (Jeunes)</option>
+                        <option value="adulte">36 - 55 ans (Adultes)</option>
+                        <option value="senior">> 55 ans (Séniors)</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Type d'Acte</label>
+                    <select id="filter-acte">
+                        <option value="TOUS">Tous les actes</option>
+                        <option value="Extraction">Extraction</option>
+                        <option value="Composite">Composite / Soins</option>
+                        <option value="Détartrage">Détartrage</option>
+                        <option value="Consultation">Consultation seule</option>
+                    </select>
+                </div>
+
+                <div class="filter-group btn-reset-wrapper">
+                    <button id="btn-reset-filters" class="btn btn-secondary">Réinitialiser</button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>N° Registre</th>
+                            <th>Patient</th>
+                            <th>Âge</th>
+                            <th>Sexe</th>
+                            <th>Adresse / Domicile</th>
+                            <th>Dent(s)</th>
+                            <th>Acte(s) Réalisé(s)</th>
+                            <th>Diagnostic / Observation</th>
+                        </tr>
+                    </thead>
+                    <tbody id="registre-tbody">
+                        <!-- Rempli dynamiquement par JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="odonto.js"></script>
+</body>
+</html>

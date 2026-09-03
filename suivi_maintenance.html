@@ -1,0 +1,420 @@
+<!--
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suivi Maintenance - Puzzle d'Interventions</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .puzzle-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
+    .puzzle-col { background: #ffffff; border-radius: 8px; padding: 15px; border: 1px solid #cbd5e1; min-height: 500px; }
+    .puzzle-col h2 { font-size: 16px; margin-bottom: 15px; text-align: center; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0; }
+    .card-demande { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; }
+    .card-demande:hover { border-color: #0284c7; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 3000; justify-content: center; align-items: center; }
+    .modal-content { background: white; padding: 24px; border-radius: 8px; max-width: 500px; width: 90%; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar-maintenance">
+    <div class="nav-brand-maint">
+      <h2>🛠️ Service Maintenance CHAN</h2>
+    </div>
+    <div class="nav-links-maint">
+      <a href="index.html" class="maint-link">🏠 Accueil</a>
+      <a href="suivi_maintenance.html" class="maint-link active">🧩 Suivi Maintenance</a>
+    </div>
+    <div class="nav-user-maint">
+      <button id="btn-logout" class="btn-logout-maint">Se Déconnecter</button>
+    </div>
+  </nav>
+
+  <main class="container" style="margin-top: 80px;">
+    <h1>Espace Suivi & Traitement des Demandes</h1>
+
+    <div class="puzzle-grid">
+      <div class="puzzle-col">
+        <h2 style="color: #0284c7;">⏳ Demandes en Attente</h2>
+        <div id="container-attente"></div>
+      </div>
+
+      <div class="puzzle-col">
+        <h2 style="color: #ea580c;">⚙️ Demandes en Cours</h2>
+        <div id="container-encours"></div>
+      </div>
+
+      <div class="puzzle-col">
+        <h2 style="color: #16a34a;">✅ Demandes déjà Traitées</h2>
+        <div id="container-traitees"></div>
+      </div>
+    </div>
+  </main>
+
+  <div id="modal-traitement" class="modal-overlay">
+    <div class="modal-content">
+      <h3 id="modal-id-title">Traitement de la demande</h3>
+      <br>
+      <p><strong>Service :</strong> <span id="m-service"></span></p>
+      <p><strong>Appareil :</strong> <span id="m-appareil"></span></p>
+      <p><strong>Demandeur :</strong> <span id="m-demandeur"></span></p>
+      <p><strong>Date :</strong> <span id="m-date"></span></p>
+      <p><strong>Description :</strong> <span id="m-description"></span></p>
+      <hr style="margin: 15px 0;">
+
+      <form id="form-assignation">
+        <input type="hidden" id="modal-demande-id">
+        <div class="filter-group" style="margin-bottom: 12px;">
+          <label>Secteur en charge :</label>
+          <select id="secteur-charge" required>
+            <option value="">-- Sélectionner le secteur --</option>
+            <option value="Biomédical">Biomédical</option>
+            <option value="Menuiserie">Menuiserie</option>
+            <option value="Plomberie">Plomberie</option>
+            <option value="Électricité">Électricité</option>
+            <option value="Froid / Climatisation">Froid / Climatisation</option>
+          </select>
+        </div>
+
+        <div class="filter-group" style="margin-bottom: 12px;">
+          <label>Personne en charge :</label>
+          <input type="text" id="personne-charge" placeholder="Nom du technicien..." required>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px;">
+          <button type="button" class="btn btn-secondary" id="btn-fermer-modal">Fermer</button>
+          <button type="submit" class="btn btn-primary">▶ Exécuter la demande</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const modal = document.getElementById('modal-traitement');
+
+      function rechargerPuzzles() {
+        const demandes = JSON.parse(localStorage.getItem('chan_demandes') || '[]');
+
+        const cAttente = document.getElementById('container-attente');
+        const cEncours = document.getElementById('container-encours');
+        const cTraitees = document.getElementById('container-traitees');
+
+        cAttente.innerHTML = '';
+        cEncours.innerHTML = '';
+        cTraitees.innerHTML = '';
+
+        demandes.forEach(d => {
+          const div = document.createElement('div');
+          div.className = 'card-demande';
+
+          if (d.statut === 'En Attente') {
+            div.innerHTML = `
+              <strong>${d.id} - ${d.appareil}</strong>
+              <p><small>Service: ${d.service} | ${d.date}</small></p>
+              <p style="color: #dc2626; font-size:11px;">Urgence: ${d.urgence}</p>
+            `;
+            div.addEventListener('click', () => ouvrirModal(d));
+            cAttente.appendChild(div);
+          } 
+          else if (d.statut === 'En Cours') {
+            div.innerHTML = `
+              <strong>${d.id} - ${d.appareil}</strong>
+              <p><small>Secteur: ${d.secteur} | Tech: ${d.technicienNom}</small></p>
+              <div style="margin-top: 8px; display: flex; gap: 5px;">
+                <button class="btn btn-secondary" style="font-size: 10px; padding: 4px;" onclick="changerStatut('${d.id}', 'En Attente')">↩ Mettre en attente</button>
+                <button class="btn btn-primary" style="font-size: 10px; padding: 4px; background: #16a34a;" onclick="changerStatut('${d.id}', 'Traité')">✅ Marquer Traité</button>
+              </div>
+            `;
+            cEncours.appendChild(div);
+          } 
+          else if (d.statut === 'Traité') {
+            div.innerHTML = `
+              <strong>${d.id} - ${d.appareil}</strong>
+              <p><small>Résolu par ${d.technicienNom} (${d.secteur})</small></p>
+              <span class="badge badge-resolu">Terminé</span>
+            `;
+            cTraitees.appendChild(div);
+          }
+        });
+      }
+
+      function ouvrirModal(d) {
+        document.getElementById('modal-demande-id').value = d.id;
+        document.getElementById('modal-id-title').textContent = `Traitement ${d.id}`;
+        document.getElementById('m-service').textContent = d.service;
+        document.getElementById('m-appareil').textContent = d.appareil;
+        document.getElementById('m-demandeur').textContent = d.demandeur;
+        document.getElementById('m-date').textContent = d.date;
+        document.getElementById('m-description').textContent = d.description;
+        modal.style.display = 'flex';
+      }
+
+      document.getElementById('btn-fermer-modal').addEventListener('click', () => modal.style.display = 'none');
+
+      document.getElementById('form-assignation').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('modal-demande-id').value;
+        const secteur = document.getElementById('secteur-charge').value;
+        const tech = document.getElementById('personne-charge').value;
+
+        let demandes = JSON.parse(localStorage.getItem('chan_demandes') || '[]');
+        demandes = demandes.map(d => {
+          if (d.id === id) {
+            d.statut = 'En Cours';
+            d.secteur = secteur;
+            d.technicienNom = tech;
+          }
+          return d;
+        });
+
+        localStorage.setItem('chan_demandes', JSON.stringify(demandes));
+        modal.style.display = 'none';
+        rechargerPuzzles();
+      });
+
+      window.changerStatut = function(id, nouveauStatut) {
+        let demandes = JSON.parse(localStorage.getItem('chan_demandes') || '[]');
+        demandes = demandes.map(d => {
+          if (d.id === id) d.statut = nouveauStatut;
+          return d;
+        });
+        localStorage.setItem('chan_demandes', JSON.stringify(demandes));
+        rechargerPuzzles();
+      };
+
+      document.getElementById('btn-logout').addEventListener('click', () => {
+        localStorage.removeItem('chan_session');
+        window.location.href = 'login.html';
+      });
+
+      rechargerPuzzles();
+    });
+  </script>
+</body>
+</html>
+-->
+
+<!--amelioration des puzzle-->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suivi Maintenance - Puzzle d'Interventions</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .puzzle-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
+    .puzzle-col { background: #ffffff; border-radius: 8px; padding: 15px; border: 1px solid #cbd5e1; min-height: 500px; }
+    .puzzle-col h2 { font-size: 16px; margin-bottom: 15px; text-align: center; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0; }
+    .card-demande { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; }
+    .card-demande:hover { border-color: #0284c7; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 3000; justify-content: center; align-items: center; }
+    .modal-content { background: white; padding: 24px; border-radius: 8px; max-width: 500px; width: 90%; }
+    .empty-msg { font-size: 13px; color: #94a3b8; text-align: center; padding: 20px 0; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar-maintenance">
+    <div class="nav-brand-maint">
+      <h2>🛠️ Service Maintenance CHAN</h2>
+    </div>
+    <div class="nav-links-maint">
+      <a href="index.html" class="maint-link">🏠 Accueil</a>
+      <a href="suivi_maintenance.html" class="maint-link active">🧩 Suivi Maintenance</a>
+    </div>
+    <div class="nav-user-maint">
+      <button id="btn-logout" class="btn-logout-maint">Se Déconnecter</button>
+    </div>
+  </nav>
+
+  <main class="container" style="margin-top: 80px;">
+    <h1>Espace Suivi & Traitement des Demandes</h1>
+
+    <div class="puzzle-grid">
+      <div class="puzzle-col">
+        <h2 style="color: #0284c7;">⏳ Demandes en Attente</h2>
+        <div id="container-attente"></div>
+      </div>
+
+      <div class="puzzle-col">
+        <h2 style="color: #ea580c;">⚙️ Demandes en Cours</h2>
+        <div id="container-encours"></div>
+      </div>
+
+      <div class="puzzle-col">
+        <h2 style="color: #16a34a;">✅ Demandes déjà Traitées</h2>
+        <div id="container-traitees"></div>
+      </div>
+    </div>
+  </main>
+
+  <div id="modal-traitement" class="modal-overlay">
+    <div class="modal-content">
+      <h3 id="modal-id-title">Traitement de la demande</h3>
+      <br>
+      <p><strong>Service :</strong> <span id="m-service"></span></p>
+      <p><strong>Appareil :</strong> <span id="m-appareil"></span></p>
+      <p><strong>Demandeur :</strong> <span id="m-demandeur"></span></p>
+      <p><strong>Date :</strong> <span id="m-date"></span></p>
+      <p><strong>Description :</strong> <span id="m-description"></span></p>
+      <hr style="margin: 15px 0;">
+
+      <form id="form-assignation">
+        <input type="hidden" id="modal-demande-id">
+        <div class="filter-group" style="margin-bottom: 12px;">
+          <label>Secteur en charge :</label>
+          <select id="secteur-charge" required>
+            <option value="">-- Sélectionner le secteur --</option>
+            <option value="Biomédical">Biomédical</option>
+            <option value="Menuiserie">Menuiserie</option>
+            <option value="Plomberie">Plomberie</option>
+            <option value="Électricité">Électricité</option>
+            <option value="Froid / Climatisation">Froid / Climatisation</option>
+          </select>
+        </div>
+
+        <div class="filter-group" style="margin-bottom: 12px;">
+          <label>Personne en charge :</label>
+          <input type="text" id="personne-charge" placeholder="Nom du technicien..." required>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px;">
+          <button type="button" class="btn btn-secondary" id="btn-fermer-modal">Fermer</button>
+          <button type="submit" class="btn btn-primary">▶ Exécuter la demande</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const modal = document.getElementById('modal-traitement');
+
+      // Synchronise la mise à jour sur les deux clés localStorage
+      function synchroniserChangement(id, majFn) {
+        // 1. Mettre à jour dans chan_demandes
+        let demandesMaint = JSON.parse(localStorage.getItem('chan_demandes') || '[]');
+        demandesMaint = demandesMaint.map(d => d.id === id ? majFn(d) : d);
+        localStorage.setItem('chan_demandes', JSON.stringify(demandesMaint));
+
+        // 2. Mettre à jour dans demandes_odontologie
+        let demandesOdonto = JSON.parse(localStorage.getItem('demandes_odontologie') || '[]');
+        demandesOdonto = demandesOdonto.map(d => d.id === id ? majFn(d) : d);
+        localStorage.setItem('demandes_odontologie', JSON.stringify(demandesOdonto));
+      }
+
+      function rechargerPuzzles() {
+        const demandes = JSON.parse(localStorage.getItem('chan_demandes') || '[]');
+
+        const cAttente = document.getElementById('container-attente');
+        const cEncours = document.getElementById('container-encours');
+        const cTraitees = document.getElementById('container-traitees');
+
+        cAttente.innerHTML = '';
+        cEncours.innerHTML = '';
+        cTraitees.innerHTML = '';
+
+        let countAttente = 0, countEncours = 0, countTraitees = 0;
+
+        demandes.forEach(d => {
+          const div = document.createElement('div');
+          div.className = 'card-demande';
+          
+          // Uniformisation de la comparaison de statut (indépendant de la casse)
+          const st = (d.statut || '').toLowerCase().trim();
+
+          if (st === 'en attente') {
+            countAttente++;
+            div.innerHTML = `
+              <strong>${d.id} - ${d.appareil}</strong>
+              <p><small>Service: ${d.service} | ${d.date}</small></p>
+              <p style="color: #dc2626; font-size:11px; margin-top:4px;">Urgence: ${d.urgence}</p>
+            `;
+            div.addEventListener('click', () => ouvrirModal(d));
+            cAttente.appendChild(div);
+          } 
+          else if (st === 'en cours') {
+            countEncours++;
+            div.innerHTML = `
+              <strong>${d.id} - ${d.appareil}</strong>
+              <p><small>Secteur: ${d.secteur || 'Non assigné'} | Tech: ${d.technicienNom || 'Non assigné'}</small></p>
+              <div style="margin-top: 8px; display: flex; gap: 5px;">
+                <button class="btn btn-secondary" style="font-size: 10px; padding: 4px;" onclick="changerStatut('${d.id}', 'En attente')">↩ Mettre en attente</button>
+                <button class="btn btn-primary" style="font-size: 10px; padding: 4px; background: #16a34a;" onclick="changerStatut('${d.id}', 'Traité')">✅ Marquer Traité</button>
+              </div>
+            `;
+            cEncours.appendChild(div);
+          } 
+          else if (st === 'traité' || st === 'traite') {
+            countTraitees++;
+            div.innerHTML = `
+              <strong>${d.id} - ${d.appareil}</strong>
+              <p><small>Résolu par ${d.technicienNom || 'N/A'} (${d.secteur || 'N/A'})</small></p>
+              <span class="badge badge-resolu" style="background:#dcfce7; color:#166534; font-size:11px; padding:2px 6px; border-radius:4px;">Terminé</span>
+            `;
+            cTraitees.appendChild(div);
+          }
+        });
+
+        // Messages si une colonne est vide
+        if (countAttente === 0) cAttente.innerHTML = '<div class="empty-msg">Aucune demande en attente</div>';
+        if (countEncours === 0) cEncours.innerHTML = '<div class="empty-msg">Aucune demande en cours</div>';
+        if (countTraitees === 0) cTraitees.innerHTML = '<div class="empty-msg">Aucune demande traitée</div>';
+      }
+
+      function ouvrirModal(d) {
+        document.getElementById('modal-demande-id').value = d.id;
+        document.getElementById('modal-id-title').textContent = `Traitement ${d.id}`;
+        document.getElementById('m-service').textContent = d.service || '-';
+        document.getElementById('m-appareil').textContent = d.appareil || '-';
+        document.getElementById('m-demandeur').textContent = d.demandeur || '-';
+        document.getElementById('m-date').textContent = d.date || '-';
+        document.getElementById('m-description').textContent = d.description || '-';
+        modal.style.display = 'flex';
+      }
+
+      document.getElementById('btn-fermer-modal').addEventListener('click', () => modal.style.display = 'none');
+
+      document.getElementById('form-assignation').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('modal-demande-id').value;
+        const secteur = document.getElementById('secteur-charge').value;
+        const tech = document.getElementById('personne-charge').value.trim();
+
+        synchroniserChangement(id, d => {
+          d.statut = 'En cours';
+          d.secteur = secteur;
+          d.technicienNom = tech;
+          return d;
+        });
+
+        modal.style.display = 'none';
+        document.getElementById('form-assignation').reset();
+        rechargerPuzzles();
+      });
+
+      window.changerStatut = function(id, nouveauStatut) {
+        synchroniserChangement(id, d => {
+          d.statut = nouveauStatut;
+          return d;
+        });
+        rechargerPuzzles();
+      };
+
+      const logoutBtn = document.getElementById('btn-logout');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          localStorage.removeItem('chan_session');
+          window.location.href = 'login.html';
+        });
+      }
+
+      rechargerPuzzles();
+    });
+  </script>
+</body>
+</html>

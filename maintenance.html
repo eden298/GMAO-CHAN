@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMAO Centralisée Maintenance - CH Abass Ndao</title>
+    <link rel="stylesheet" href="maintenance.css">
+</head>
+<body>
+
+    <header class="header-maint">
+        <h1>CH Abass Ndao — Central Server Maintenance</h1>
+        <div><span id="user-display">Responsable Maintenance</span></div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Gestion des Demandes d'Intervention Multi-Services</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Urgence</th>
+                            <th>ID Ticket</th>
+                            <th>Date</th>
+                            <th>Service Demandeur</th>
+                            <th>Équipement / Panne</th>
+                            <th>Technicien Affecté</th>
+                            <th>Statut Workflow</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-maint-workflow">
+                        <!-- Rempli par JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="maintenance.js"></script>
+</body>
+</html>

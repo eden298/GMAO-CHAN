@@ -1,0 +1,396 @@
+<!--<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Odontologie - CH Abass Ndao</title>
+    <link rel="stylesheet" href="odonto2.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Sidebar de Navigation 
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>CH Abass Ndao</h2>
+            <p>Odontologie</p>
+        </div>
+        <nav class="sidebar-nav">
+            <button class="nav-btn active" data-target="sec-dashboard">
+                📊 Mon Tableau de Bord
+            </button>
+            <button class="nav-btn" data-target="sec-clinique">
+                📋 Registre Clinique
+            </button>
+            <button class="nav-btn" data-target="sec-maintenance">
+                🛠️ Espace Maintenance
+            </button>
+        </nav>
+        <div class="sidebar-footer">
+            <span id="user-display">Major Odontologie</span>
+            <button id="btn-logout" class="btn-logout">Déconnexion</button>
+        </div>
+    </aside>
+
+   Contenu Principal 
+    <main class="main-content">
+
+        1. VUE TABLEAU DE BORD HYBRIDE 
+        <section id="sec-dashboard" class="page-section active">
+            <div class="page-header">
+                <h1>📊 Mon Tableau de Bord</h1>
+                <p>Synthèse hybride des activités cliniques et de l'état du parc matériel</p>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <h3>Consultations (Mois)</h3>
+                    <div class="kpi-value" id="kpi-dash-consults">500</div>
+                </div>
+                <div class="kpi-card danger">
+                    <h3>Équipements en Panne</h3>
+                    <div class="kpi-value" id="kpi-dash-pannes">0</div>
+                </div>
+                <div class="kpi-card warning">
+                    <h3>Maintenances En Cours</h3>
+                    <div class="kpi-value" id="kpi-dash-encours">0</div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="card">
+                    <h2>Répartition des Actes Cliniques</h2>
+                    <div class="chart-box"><canvas id="chartDashClinique"></canvas></div>
+                </div>
+                <div class="card">
+                    <h2>Santé des Équipements</h2>
+                    <div class="chart-box"><canvas id="chartDashEquipement"></canvas></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. VUE REGISTRE CLINIQUE 
+        <section id="sec-clinique" class="page-section">
+            <div class="page-header">
+                <h1>📋 Registre Clinique (500 actes)</h1>
+                <p>Historique et suivi des consultations et soins dentaires</p>
+            </div>
+            
+            <div class="card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID Patient</th>
+                                <th>Date</th>
+                                <th>Acte Réalisé</th>
+                                <th>Praticien</th>
+                                <th>Observations</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-clinique">
+                            <!-- Chargé via JS --
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. VUE ESPACE MAINTENANCE --
+        <section id="sec-maintenance" class="page-section">
+            <div class="page-header header-flex">
+                <div>
+                    <h1>🛠️ Espace Maintenance</h1>
+                    <p>Suivi du parc matériel et gestion des pannes du service</p>
+                </div>
+                <button id="btn-open-ticket-modal" class="btn-primary">+ Demander une intervention</button>
+            </div>
+
+            <!-- Bannière d'état persistante --
+            <div class="status-banner" id="status-banner">
+                <span>Dernière demande : </span><strong id="banner-text">Aucune demande récente</strong>
+            </div>
+
+            <!-- Mini KPIs Maintenance --
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <h3>Total Demandes</h3>
+                    <div class="kpi-value" id="kpi-maint-total">0</div>
+                </div>
+                <div class="kpi-card warning">
+                    <h3>En Cours</h3>
+                    <div class="kpi-value" id="kpi-maint-encours">0</div>
+                </div>
+                <div class="kpi-card success">
+                    <h3>Résolues</h3>
+                    <div class="kpi-value" id="kpi-maint-resolus">0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Interventions par Appareil</h2>
+                <div class="chart-box-sm"><canvas id="chartMaintAppareils"></canvas></div>
+            </div>
+
+            <!-- Inventaire Global --
+            <div class="card">
+                <h2>Inventaire Global des Équipements</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Modèle</th>
+                                <th>Service</th>
+                                <th>État Santé</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-inventaire">
+                            <!-- Rempli par JS --
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL 1 : DEMANDE D'INTERVENTION --
+    <div class="modal" id="modal-ticket">
+        <div class="modal-content">
+            <span class="close-modal" id="close-modal-ticket">&times;</span>
+            <h2>Signaler une panne / demande</h2>
+            <form id="form-ticket">
+                <div class="form-group">
+                    <label>Catégorie d'intervention</label>
+                    <select id="ticket-categorie" required>
+                        <option value="Biomédical">Équipement biomédical</option>
+                        <option value="Infrastructure">Infrastructures / Bâtiment</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="grp-appareil">
+                    <label>Équipement concerné</label>
+                    <select id="ticket-appareil">
+                        <!-- Rempli dynamiquement --
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Niveau d'Urgence</label>
+                    <select id="ticket-urgence" required>
+                        <option value="Faible">Faible (Maintenance mineure)</option>
+                        <option value="Moyen" selected>Moyen (Gênant mais utilisable)</option>
+                        <option value="Critique">Critique (Urgence Vitale / Arrêt)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Description des symptômes</label>
+                    <textarea id="ticket-desc" rows="3" required placeholder="Détaillez le dysfonctionnement..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary w-100">Envoyer le Ticket</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2 : FICHE TECHNIQUE ÉQUIPEMENT --
+    <div class="modal" id="modal-equipement">
+        <div class="modal-content modal-lg">
+            <span class="close-modal" id="close-modal-equipement">&times;</span>
+            <h2 id="eq-title">Fiche Technique Équipement</h2>
+            <div class="equipement-details-grid">
+                <div><strong>Marque / Fabricant :</strong> <span id="eq-marque"></span></div>
+                <div><strong>Numéro de Série :</strong> <span id="eq-sn"></span></div>
+                <div><strong>Date d'installation :</strong> <span id="eq-date"></span></div>
+                <div><strong>État Actuel :</strong> <span id="eq-etat"></span></div>
+            </div>
+            <hr class="separator">
+            <h3>Historique des Maintenances & Pannes</h3>
+            <ul id="eq-historique-list" class="historique-list">
+                <!-- Historique alimenté en JS --
+            </ul>
+        </div>
+    </div>
+
+    <script src="odonto2.js"></script>
+</body>
+</html>
+
+-->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Odontologie - Activité Consultations & Soins | CHAN</title>
+    <link rel="stylesheet" href="odonto2.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="badge-service">Odontologie</span>
+            <h2>Plateforme CHAN</h2>
+        </div>
+        <div class="nav-menu">
+            <a href="odonto2.html" class="nav-link active">🏠 Accueil</a>
+            <a href="materiel.html" class="nav-link">🛠️ Espace Matériel</a>
+            <a href="demande.html" class="nav-link">📝 Demander une Intervention</a>
+        </div>
+        <div class="nav-user">
+            <div class="user-info">
+                <span id="user-name">Chargement...</span>
+                <small id="user-role">Service Odontologie</small>
+            </div>
+            <button id="btn-logout" class="btn-logout">Déconnexion</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <div>
+                <h1>Registre des Consultations & Actes Dentaires</h1>
+                <p>Suivi de l'activité médicale, des soins dentaires et de la patientèle du service.</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="alert('Fonctionnalité d\'exportation en cours de développement')">
+                    📥 Exporter le Registre
+                </button>
+            </div>
+        </header>
+
+        <section class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon blue">🩺</div>
+                <div class="kpi-data">
+                    <span class="kpi-label">Total Consultations</span>
+                    <h3 id="kpi-total-consultations">0</h3>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon red">🦷</div>
+                <div class="kpi-data">
+                    <span class="kpi-label">Extractions Dentaires</span>
+                    <h3 id="kpi-extractions">0</h3>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon green">✨</div>
+                <div class="kpi-data">
+                    <span class="kpi-label">Obturations / Soins</span>
+                    <h3 id="kpi-soins">0</h3>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon purple">🪥</div>
+                <div class="kpi-data">
+                    <span class="kpi-label">Détartrages & Prévention</span>
+                    <h3 id="kpi-detartrages">0</h3>
+                </div>
+            </div>
+        </section>
+
+        <section class="charts-grid-top">
+            <div class="chart-card full-width">
+                <h3>📈 Évolution Temporelle de la Patientèle (Consultations par Date)</h3>
+                <div class="chart-wrapper">
+                    <canvas id="chartEvolution"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section class="charts-grid">
+            <div class="chart-card">
+                <h3>Répartition des Actes Dentaires Réalisés</h3>
+                <div class="chart-wrapper">
+                    <canvas id="chartActes"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>Répartition des Patients par Sexe</h3>
+                <div class="chart-wrapper">
+                    <canvas id="chartSexe"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section class="table-card">
+            <div class="table-header">
+                <h3>Registre des Consultations</h3>
+            </div>
+
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label>Recherche rapide</label>
+                    <input type="text" id="search-input" placeholder="Patient, N° reg, adresse, dent..." />
+                </div>
+                <div class="filter-group">
+                    <label>Période (Du / Au)</label>
+                    <div class="date-inputs">
+                        <input type="date" id="filter-date-start" />
+                        <input type="date" id="filter-date-end" />
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label>Genre</label>
+                    <select id="filter-genre">
+                        <option value="TOUS">Tous</option>
+                        <option value="M">Hommes (M)</option>
+                        <option value="F">Femmes (F)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Tranche d'âge</label>
+                    <select id="filter-age">
+                        <option value="TOUS">Tous les âges</option>
+                        <option value="enfant">&lt; 18 ans (Enfants)</option>
+                        <option value="jeune">18 - 35 ans (Jeunes)</option>
+                        <option value="adulte">36 - 55 ans (Adultes)</option>
+                        <option value="senior">&gt; 55 ans (Séniors)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Type d'Acte</label>
+                    <select id="filter-acte">
+                        <option value="TOUS">Tous les actes</option>
+                        <option value="Extraction">Extraction</option>
+                        <option value="Composite">Composite / Soins</option>
+                        <option value="Détartrage">Détartrage</option>
+                        <option value="Consultation">Consultation seule</option>
+                    </select>
+                </div>
+                <div class="filter-group btn-reset-wrapper">
+                    <button id="btn-reset-filters" class="btn btn-secondary">Réinitialiser</button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>N° Registre</th>
+                            <th>Patient</th>
+                            <th>Âge</th>
+                            <th>Sexe</th>
+                            <th>Adresse / Domicile</th>
+                            <th>Dent(s)</th>
+                            <th>Acte(s) Réalisé(s)</th>
+                            <th>Diagnostic / Observation</th>
+                        </tr>
+                    </thead>
+                    <tbody id="registre-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script src="odonto2.js"></script>
+</body>
+</html>

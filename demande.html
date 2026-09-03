@@ -1,0 +1,212 @@
+
+<!--
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demande d'Intervention - Service Odontologie | CHAN</title>
+    <link rel="stylesheet" href="odonto2.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="badge-service">Odontologie</span>
+            <h2>Plateforme CHAN</h2>
+        </div>
+        <div class="nav-menu">
+            <a href="odonto2.html" class="nav-link">🏠 Accueil</a>
+            <a href="materiel.html" class="nav-link">🛠️ Espace Matériel</a>
+            <a href="demande.html" class="nav-link active">📝 Demander une Intervention</a>
+        </div>
+        <div class="nav-user">
+            <div class="user-info">
+                <span id="user-name">Chargement...</span>
+                <small id="user-role">Service Odontologie</small>
+            </div>
+            <button id="btn-logout" class="btn-logout">Déconnexion</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container" style="max-width: 800px;">
+        <header class="dashboard-header">
+            <div>
+                <h1>Signalement de Panne / Demande de Maintenance</h1>
+                <p>Remplissez le formulaire ci-dessous pour transmettre une alerte au service technique.</p>
+            </div>
+        </header>
+
+        <section class="table-card">
+            <form id="form-intervention" class="form-grid">
+                <div class="form-group">
+                    <label for="date-demande">Date de la Demande</label>
+                    <input type="date" id="date-demande" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="demandeur">Demandeur / Agent</label>
+                    <input type="text" id="demandeur" placeholder="Nom du demandeur..." required>
+                </div>
+
+                <div class="form-group">
+                    <label for="appareil">Appareil Concerné</label>
+                    <select id="appareil" required>
+                        <option value="">-- Sélectionner l'équipement --</option>
+                        <option value="Scialytique Dentaire">Scialytique Dentaire (KaVo)</option>
+                        <option value="Fauteuil Dentaire">Fauteuil Dentaire (A-dec 500)</option>
+                        <option value="Autoclave Stérilisateur">Autoclave Stérilisateur (Melag)</option>
+                        <option value="Radio Panoramique">Radio Panoramique (Carestream)</option>
+                        <option value="Moteur Endodontie">Moteur d'Endodontie (Dentsply)</option>
+                        <option value="Détartreur Ultrasons">Détartreur Ultrasons (NSK)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="type-panne">Type de Panne</label>
+                    <select id="type-panne" required>
+                        <option value="">-- Sélectionner le type --</option>
+                        <option value="Panne Électrique">Panne Électrique</option>
+                        <option value="Fuite d'eau / Hydraulique">Fuite d'eau / Hydraulique</option>
+                        <option value="Problème Mécanique">Problème Mécanique</option>
+                        <option value="Défaut Électronique">Défaut Électronique / Capteur</option>
+                        <option value="Entretien Préventif">Maintenance Préventive</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="niveau-urgence">Niveau d'Urgence</label>
+                    <select id="niveau-urgence" required>
+                        <option value="Faible">Faible (Gêne mineure)</option>
+                        <option value="Moyenne">Moyenne (Utilisation partielle)</option>
+                        <option value="Critique">Critique (Appareil bloqué / Arrêt de soin)</option>
+                    </select>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="description">Description détaillée du problème</label>
+                    <textarea id="description" rows="4" placeholder="Précisez les symptômes de la panne..." required></textarea>
+                </div>
+
+                <div class="form-actions full-width">
+                    <button type="submit" class="btn btn-primary btn-submit">🚀 Envoyer la Demande</button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <script src="demande.js"></script>
+</body>
+</html>
+-->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demande d'Intervention - Service Odontologie | CHAN</title>
+    <link rel="stylesheet" href="odonto2.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="badge-service">Odontologie</span>
+            <h2>Plateforme CHAN</h2>
+        </div>
+        <div class="nav-menu">
+            <a href="odonto2.html" class="nav-link">🏠 Accueil</a>
+            <a href="materiel.html" class="nav-link">🛠️ Espace Matériel</a>
+            <a href="demande.html" class="nav-link active">📝 Demander une Intervention</a>
+            <a href="historique_demandes.html" class="nav-link">📋 Historique Demandes</a>
+        </div>
+        <div class="nav-user">
+            <div class="user-info">
+                <span id="user-name">Chargement...</span>
+                <small id="user-role">Service Odontologie</small>
+            </div>
+            <button id="btn-logout" class="btn-logout">Déconnexion</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container" style="max-width: 800px;">
+        <!-- Notification visuelle de succès -->
+        <div id="notification-box" class="notification-alert" style="display: none;">
+            ✅ Votre demande d'intervention a été transmise avec succès et enregistrée !
+        </div>
+
+        <header class="dashboard-header">
+            <div>
+                <h1>Signalement de Panne / Demande de Maintenance</h1>
+                <p>Remplissez le formulaire ci-dessous pour transmettre une alerte au service technique.</p>
+            </div>
+            <div>
+                <a href="historique_demandes.html" class="btn btn-secondary">📋 Historique des demandes</a>
+            </div>
+        </header>
+
+        <section class="table-card">
+            <form id="form-intervention" class="form-grid">
+                <div class="form-group">
+                    <label for="date-demande">Date de la Demande</label>
+                    <input type="date" id="date-demande" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="demandeur">Demandeur / Agent</label>
+                    <input type="text" id="demandeur" placeholder="Nom du demandeur..." required>
+                </div>
+
+                <div class="form-group">
+                    <label for="appareil">Appareil Concerné</label>
+                    <select id="appareil" required>
+                        <option value="">-- Sélectionner l'équipement --</option>
+                        <option value="Scialytique Dentaire">Scialytique Dentaire (KaVo)</option>
+                        <option value="Fauteuil Dentaire">Fauteuil Dentaire (A-dec 500)</option>
+                        <option value="Autoclave Stérilisateur">Autoclave Stérilisateur (Melag)</option>
+                        <option value="Radio Panoramique">Radio Panoramique (Carestream)</option>
+                        <option value="Moteur Endodontie">Moteur d'Endodontie (Dentsply)</option>
+                        <option value="Détartreur Ultrasons">Détartreur Ultrasons (NSK)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="type-panne">Type de Panne</label>
+                    <select id="type-panne" required>
+                        <option value="">-- Sélectionner le type --</option>
+                        <option value="Panne Électrique">Panne Électrique</option>
+                        <option value="Fuite d'eau / Hydraulique">Fuite d'eau / Hydraulique</option>
+                        <option value="Problème Mécanique">Problème Mécanique</option>
+                        <option value="Défaut Électronique">Défaut Électronique / Capteur</option>
+                        <option value="Entretien Préventif">Maintenance Préventive</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="niveau-urgence">Niveau d'Urgence</label>
+                    <select id="niveau-urgence" required>
+                        <option value="Faible">Faible (Gêne mineure)</option>
+                        <option value="Moyenne">Moyenne (Utilisation partielle)</option>
+                        <option value="Critique">Critique (Appareil bloqué / Arrêt de soin)</option>
+                    </select>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="description">Description détaillée du problème</label>
+                    <textarea id="description" rows="4" placeholder="Précisez les symptômes de la panne..." required></textarea>
+                </div>
+
+                <div class="form-actions full-width">
+                    <button type="submit" class="btn btn-primary btn-submit">🚀 Envoyer la Demande</button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <script src="demande.js"></script>
+</body>
+</html>
+

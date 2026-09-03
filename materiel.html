@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventaire Équipements - Service Odontologie | CHAN</title>
+    <link rel="stylesheet" href="odonto2.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="badge-service">Odontologie</span>
+            <h2>Plateforme CHAN</h2>
+        </div>
+        <div class="nav-menu">
+            <a href="odonto2.html" class="nav-link">🏠 Accueil</a>
+            <a href="materiel.html" class="nav-link active">🛠️ Espace Matériel</a>
+            <a href="demande.html" class="nav-link">📝 Demander une Intervention</a>
+        </div>
+        <div class="nav-user">
+            <div class="user-info">
+                <span id="user-name">Chargement...</span>
+                <small id="user-role">Service Odontologie</small>
+            </div>
+            <button id="btn-logout" class="btn-logout">Déconnexion</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <div>
+                <h1>Inventaire & État du Parc Matériel</h1>
+                <p>Base de données des équipements et dispositifs médicaux du service d'odontologie.</p>
+            </div>
+            <div class="header-actions">
+                <a href="demande.html" class="btn btn-primary">+ Signaler une Panne</a>
+            </div>
+        </header>
+
+        <section class="table-card">
+            <div class="table-header">
+                <h3>Base de Données des Appareils</h3>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Code Appareil</th>
+                            <th>Nom de l'Équipement</th>
+                            <th>Marque</th>
+                            <th>Modèle</th>
+                            <th>Localisation</th>
+                            <th>État Fonctionnel</th>
+                            <th>Dernière Maintenance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>EQP-OD-001</code></td>
+                            <td><strong>Scialytique Dentaire</strong></td>
+                            <td>KaVo</td>
+                            <td>OS-200</td>
+                            <td>Fauteuil 1</td>
+                            <td><span class="badge badge-red">En Panne</span></td>
+                            <td>28/08/2026</td>
+                        </tr>
+                        <tr>
+                            <td><code>EQP-OD-002</code></td>
+                            <td><strong>Fauteuil Dentaire</strong></td>
+                            <td>A-dec</td>
+                            <td>A-dec 500</td>
+                            <td>Salle A</td>
+                            <td><span class="badge badge-red">En Panne</span></td>
+                            <td>25/08/2026</td>
+                        </tr>
+                        <tr>
+                            <td><code>EQP-OD-003</code></td>
+                            <td><strong>Autoclave Stérilisateur</strong></td>
+                            <td>Melag</td>
+                            <td>Euroklav 23V</td>
+                            <td>Salle Stérilisation</td>
+                            <td><span class="badge badge-green">Opérationnel</span></td>
+                            <td>10/06/2026</td>
+                        </tr>
+                        <tr>
+                            <td><code>EQP-OD-004</code></td>
+                            <td><strong>Radio Panoramique</strong></td>
+                            <td>Carestream</td>
+                            <td>CS 8100</td>
+                            <td>Salle Imagerie</td>
+                            <td><span class="badge badge-green">Opérationnel</span></td>
+                            <td>15/05/2026</td>
+                        </tr>
+                        <tr>
+                            <td><code>EQP-OD-005</code></td>
+                            <td><strong>Moteur d'Endodontie</strong></td>
+                            <td>Dentsply Sirona</td>
+                            <td>X-Smart Plus</td>
+                            <td>Fauteuil 2</td>
+                            <td><span class="badge badge-green">Opérationnel</span></td>
+                            <td>02/07/2026</td>
+                        </tr>
+                        <tr>
+                            <td><code>EQP-OD-006</code></td>
+                            <td><strong>Détartreur Ultrasons</strong></td>
+                            <td>NSK</td>
+                            <td>Varios 970</td>
+                            <td>Fauteuil 1</td>
+                            <td><span class="badge badge-purple">Sous Maintenance</span></td>
+                            <td>01/09/2026</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script src="materiel.js"></script>
+</body>
+</html>

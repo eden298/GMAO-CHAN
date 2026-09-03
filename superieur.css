@@ -1,0 +1,150 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  background-color: #e4ecf4;
+  color: #0f172a;
+  padding-bottom: 50px;
+}
+
+/* Header VIP */
+.header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: white;
+  padding: 25px 0;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.header-container {
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-info {
+  text-align: right;
+}
+
+#user-display {
+  font-size: 13px;
+  font-weight: 700;
+  background: #3b82f6;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.btn-logout {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background-color: #dc2626;
+}
+
+.container {
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.welcome-text {
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.welcome-text h2 {
+  font-size: 20px;
+  color: #475569;
+  font-weight: 600;
+}
+
+/* GRILLE DU PUZZLE (2 colonnes ou 3 selon l'écran) */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 25px;
+}
+
+/* CARTES DU PUZZLE */
+.service-card {
+  background: rgb(255, 255, 255);
+  border-radius: 12px;
+  padding: 25px;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Thèmes par couleur d'accent pour chaque cage */
+.card-maintenance { border-top: 5px solid #004b8d; }
+.card-odonto { border-top: 5px solid #f59e0b; }
+.card-urgences { border-top: 5px solid #ef4444; }
+.card-maternité, .card-maternite { border-top: 5px solid #ec4899; }
+.card-pediatrie { border-top: 5px solid #10b981; }
+.card-bloc { border-top: 5px solid #8b5cf6; }
+
+.card-icon {
+  font-size: 32px;
+  margin-bottom: 15px;
+  color: #1e293b;
+}
+
+.card-content h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #0f172a;
+}
+
+.card-content p {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #2563eb;
+  padding-top: 15px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.service-card:hover .card-footer i {
+  transform: translateX(5px);
+  transition: transform 0.2s;
+}

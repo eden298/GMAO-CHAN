@@ -1,0 +1,311 @@
+<!--
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard de Maintenance Avancé</title>
+  
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <header class="header">
+    <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1300px; margin: 0 auto; padding: 0 15px;">
+      <div>
+        <h1>Dashboard Analytics & Maintenance Hospitalière</h1>
+        <p>Suivi, prédictions et analyse des coûts</p>
+      </div>
+      <div style="text-align: right;">
+        <span id="user-display" style="font-size: 13px; font-weight: bold; background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 20px; display: inline-block; margin-bottom: 5px;">
+          Connecté
+        </span>
+        <br>
+        <button id="btn-logout" style="background: #ef4444; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer;">
+          Se Déconnecter
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    
+    <!-- BARRE DE FILTRES AVANCÉE --
+    <section class="filters-bar">
+      <div class="filter-group">
+        <label for="date-debut">Date Début :</label>
+        <input type="date" id="date-debut">
+      </div>
+
+      <div class="filter-group">
+        <label for="date-fin">Date Fin :</label>
+        <input type="date" id="date-fin">
+      </div>
+
+      <div class="filter-group">
+        <label for="select-service">Service :</label>
+        <select id="select-service">
+          <option value="TOUS">Tous les services</option>
+          <option value="Maternité">Maternité</option>
+          <option value="Odontologie">Odontologie</option>
+          <option value="Pédiatrie">Pédiatrie</option>
+          <option value="Urgences">Urgences</option>
+          <option value="Bloc Opératoire">Bloc Opératoire</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="select-statut">Statut :</label>
+        <select id="select-statut">
+          <option value="TOUS">Tous les statuts</option>
+          <option value="Résolu">Résolu</option>
+          <option value="En Cours">En Cours</option>
+          <option value="En Attente">En Attente</option>
+          <option value="Pas Résolu">Pas Résolu</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="select-panne">Type de Panne :</label>
+        <select id="select-panne">
+          <option value="TOUS">Tous les types</option>
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button id="btn-reset" class="btn btn-secondary">Réinitialiser</button>
+        <button id="btn-export" class="btn btn-primary">Exporter CSV</button>
+      </div>
+    </section>
+
+    <!-- CARTES KPIS AVEC PROJECTION DATA SCIENCE --
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <h3>Total Interventions</h3>
+        <p id="kpi-total" class="kpi-value">0</p>
+      </div>
+      <div class="kpi-card success">
+        <h3>Taux de Résolution</h3>
+        <p id="kpi-taux" class="kpi-value">0%</p>
+      </div>
+      <div class="kpi-card danger">
+        <h3>Dépenses Totales</h3>
+        <p id="kpi-depenses" class="kpi-value">0 FCFA</p>
+      </div>
+      <div class="kpi-card prediction">
+        <h3>Projection Interventions (+30j)</h3>
+        <p id="kpi-projection" class="kpi-value">--</p>
+        <small id="kpi-projection-sub">Tendance estimée</small>
+      </div>
+    </section>
+
+    <!-- GRAPHIQUES ANALYTIQUES ET PRÉDICTIFS --
+    <section class="charts-grid">
+      <!-- 1. Vue Globale par Service --
+      <div class="card">
+        <h2>Interventions par Service</h2>
+        <div class="chart-box"><canvas id="chartGlobal"></canvas></div>
+      </div>
+
+      <!-- 2. Répartition par Type de Panne --
+      <div class="card">
+        <h2>Répartition par Type de Panne</h2>
+        <div class="chart-box"><canvas id="chartDetailBar"></canvas></div>
+      </div>
+
+      <!-- 3. Évolution & Prédiction à +30 jours --
+      <div class="card card-wide">
+        <h2>Évolution Temporelle & Projection Prédictive (+30 jours)</h2>
+        <div class="chart-box"><canvas id="chartEvolution"></canvas></div>
+      </div>
+
+      <!-- 4. Analyse des Coûts par Technicien --
+      <div class="card">
+        <h2>Coûts Totaux Générés par Technicien (FCFA)</h2>
+        <div class="chart-box"><canvas id="chartCoutTechnicien"></canvas></div>
+      </div>
+
+      <!-- 5. Répartition par Statut --
+      <div class="card">
+        <h2>Répartition par Statut</h2>
+        <div class="chart-box"><canvas id="chartDetailPie"></canvas></div>
+      </div>
+    </section>
+
+    <!-- TABLEAU DE BORD --
+    <section class="card">
+      <h2>Registre des Interventions</h2>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Date</th>
+              <th>Service</th>
+              <th>Type de Panne</th>
+              <th>Technicien</th>
+              <th>Statut</th>
+              <th>Coût</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <!-- Dynamique --
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
+-->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard de Maintenance Avancé</title>
+  
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <nav class="navbar-maintenance">
+    <div class="nav-brand-maint">
+      <h2>🛠️ Service Maintenance CHAN</h2>
+    </div>
+    <div class="nav-links-maint">
+      <a href="index.html" class="maint-link active">🏠 Accueil</a>
+      <a href="suivi_maintenance.html" class="maint-link">🧩 Suivi Maintenance</a>
+    </div>
+    <div class="nav-user-maint">
+      <span id="user-display">Connecté</span>
+      <button id="btn-logout" class="btn-logout-maint">Se Déconnecter</button>
+    </div>
+  </nav>
+
+  <main class="container" style="margin-top: 80px;">
+    
+    <section class="filters-bar">
+      <div class="filter-group">
+        <label for="date-debut">Date Début :</label>
+        <input type="date" id="date-debut">
+      </div>
+
+      <div class="filter-group">
+        <label for="date-fin">Date Fin :</label>
+        <input type="date" id="date-fin">
+      </div>
+
+      <div class="filter-group">
+        <label for="select-service">Service :</label>
+        <select id="select-service">
+          <option value="TOUS">Tous les services</option>
+          <option value="Maternité">Maternité</option>
+          <option value="Odontologie">Odontologie</option>
+          <option value="Pédiatrie">Pédiatrie</option>
+          <option value="Urgences">Urgences</option>
+          <option value="Bloc Opératoire">Bloc Opératoire</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="select-statut">Statut :</label>
+        <select id="select-statut">
+          <option value="TOUS">Tous les statuts</option>
+          <option value="Résolu">Résolu</option>
+          <option value="En Cours">En Cours</option>
+          <option value="En Attente">En Attente</option>
+          <option value="Pas Résolu">Pas Résolu</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="select-panne">Type de Panne :</label>
+        <select id="select-panne">
+          <option value="TOUS">Tous les types</option>
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button id="btn-reset" class="btn btn-secondary">Réinitialiser</button>
+        <button id="btn-export" class="btn btn-primary">Exporter CSV</button>
+      </div>
+    </section>
+
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <h3>Total Interventions</h3>
+        <p id="kpi-total" class="kpi-value">0</p>
+      </div>
+      <div class="kpi-card success">
+        <h3>Taux de Résolution</h3>
+        <p id="kpi-taux" class="kpi-value">0%</p>
+      </div>
+      <div class="kpi-card danger">
+        <h3>Dépenses Totales</h3>
+        <p id="kpi-depenses" class="kpi-value">0 FCFA</p>
+      </div>
+      <div class="kpi-card prediction">
+        <h3>Projection Interventions (+30j)</h3>
+        <p id="kpi-projection" class="kpi-value">--</p>
+        <small id="kpi-projection-sub">Tendance estimée</small>
+      </div>
+    </section>
+
+    <section class="charts-grid">
+      <div class="card">
+        <h2>Interventions par Service</h2>
+        <div class="chart-box"><canvas id="chartGlobal"></canvas></div>
+      </div>
+
+      <div class="card">
+        <h2>Répartition par Type de Panne</h2>
+        <div class="chart-box"><canvas id="chartDetailBar"></canvas></div>
+      </div>
+
+      <div class="card card-wide">
+        <h2>Évolution Temporelle & Projection Prédictive (+30 jours)</h2>
+        <div class="chart-box"><canvas id="chartEvolution"></canvas></div>
+      </div>
+
+      <div class="card">
+        <h2>Coûts Totaux Générés par Technicien (FCFA)</h2>
+        <div class="chart-box"><canvas id="chartCoutTechnicien"></canvas></div>
+      </div>
+
+      <div class="card">
+        <h2>Répartition par Statut</h2>
+        <div class="chart-box"><canvas id="chartDetailPie"></canvas></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Registre des Interventions</h2>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Date</th>
+              <th>Service</th>
+              <th>Type de Panne</th>
+              <th>Technicien</th>
+              <th>Statut</th>
+              <th>Coût</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
