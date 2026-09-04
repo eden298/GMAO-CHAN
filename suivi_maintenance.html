@@ -676,8 +676,6 @@
 <!-- AJOUR DE NOTIFICATION SONOR-->
 
 
-
- 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -803,6 +801,48 @@
 
     document.addEventListener('click', unlockAudio, { once: true });
     document.addEventListener('touchstart', unlockAudio, { once: true });
+
+    // Notification visuelle d'une nouvelle demande (affichée 1 min maximum)
+    function afficherAlerteVisuelle(demande) {
+      const ancienneAlerte = document.getElementById('alerte-nouvelle-demande');
+      if (ancienneAlerte) ancienneAlerte.remove();
+
+      const alerte = document.createElement('div');
+      alerte.id = 'alerte-nouvelle-demande';
+      alerte.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #0284c7;
+        color: white;
+        padding: 16px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        z-index: 9999;
+        font-family: sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        max-width: 380px;
+      `;
+
+      alerte.innerHTML = `
+        <span style="font-size: 24px;">🚨</span>
+        <div style="flex: 1;">
+          <strong style="display: block; font-size: 14px;">Nouvelle demande en attente !</strong>
+          <small style="font-size: 12px; opacity: 0.9;">Appareil : ${demande.appareil || 'N/A'} (${demande.service || 'N/A'})</small>
+        </div>
+        <button onclick="this.parentElement.remove()" style="background: transparent; border: none; color: white; font-weight: bold; cursor: pointer; font-size: 16px;">✕</button>
+      `;
+
+      document.body.appendChild(alerte);
+
+      setTimeout(() => {
+        if (alerte && alerte.parentElement) {
+          alerte.remove();
+        }
+      }, 60000);
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
       const modal = document.getElementById('modal-traitement');
@@ -941,6 +981,7 @@
             notificationAudio.play().catch(err => {
               console.warn("L'autofocus audio requiert un clic préalable :", err);
             });
+            afficherAlerteVisuelle(payload.new);
           }
           rechargerPuzzles();
         })
@@ -951,3 +992,5 @@
   </script>
 </body>
 </html>
+
+ 
