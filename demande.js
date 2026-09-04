@@ -168,6 +168,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //version interconnection maintenance et odontologie
 
+/*
+
 function verifierAcces() {
   const sessionData = localStorage.getItem('chan_session');
   if (!sessionData) {
@@ -261,3 +263,112 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+*/
+
+/*INTEGRATION BD*/
+
+function verifierAcces() {
+  const sessionData = localStorage.getItem('chan_session');
+  if (!sessionData) {
+    window.location.href = 'login.html';
+    return null;
+  }
+  return JSON.parse(sessionData);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const user = verifierAcces();
+  
+  // Affichage des informations utilisateur
+  if (user) {
+    const nameEl = document.getElementById('user-name');
+    const roleEl = document.getElementById('user-role');
+    const demandeurInput = document.getElementById('demandeur');
+
+    if (nameEl) nameEl.textContent = user.nom || 'Utilisateur';
+    if (roleEl) roleEl.textContent = user.service === 'SUPERIEUR' ? 'Accès Direction Supérieure' : 'Responsable Odontologie';
+    if (demandeurInput && !demandeurInput.value) demandeurInput.value = user.nom || '';
+  }
+
+  // Date du jour par défaut
+  const dateInput = document.getElementById('date-demande');
+  if (dateInput) {
+    dateInput.value = new Date().toISOString().split('T')[0];
+  }
+
+  // Déconnexion
+  const logoutBtn = document.getElementById('btn-logout');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('chan_session');
+      window.location.href = 'login.html';
+    });
+  }
+
+  // Soumission du formulaire
+  const form = document.getElementById('form-intervention');
+  const notif = document.getElementById('notification-box');
+
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Désactivation temporaire du bouton pour éviter les envois multiples
+      const btnSubmit = form.querySelector('.btn-submit');
+      if (btnSubmit) btnSubmit.disabled = true;
+
+      // Structuration de la donnée en suivant la casse exacte des colonnes PostgreSQL/Supabase
+      const nouvelleDemande = {
+        id: 'DEM-' + Date.now(),
+        service: 'Odontologie',
+        date: document.getElementById('date-demande').value,
+        demandeur: document.getElementById('demandeur').value.trim(),
+        appareil: document.getElementById('appareil').value,
+        type_panne: document.getElementById('type-panne').value,
+        urgence: document.getElementById('niveau-urgence').value,
+        description: document.getElementById('description').value.trim(),
+        statut: 'En attente',
+        secteur: 'Non assigné',
+        technicien_nom: 'Non assigné'
+      };
+
+      try {
+        // Envoi de la demande directement dans la table Supabase
+        const { data, error } = await _supabase
+          .from('demandes')
+          .insert([nouvelleDemande]);
+
+        if (error) {
+          throw error;
+        }
+
+        // Affichage de la notification de succès
+        if (notif) {
+          notif.style.display = 'block';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        form.reset();
+        
+        // Réinitialisation des champs par défaut
+        if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+        if (user && document.getElementById('demandeur')) {
+          document.getElementById('demandeur').value = user.nom || '';
+        }
+
+        // Masquage automatique du message après 4 secondes
+        setTimeout(() => {
+          if (notif) notif.style.display = 'none';
+        }, 4000);
+
+      } catch (err) {
+        console.error('Erreur lors de l’envoi à Supabase :', err.message);
+        alert('Erreur lors du signalement : ' + err.message);
+      } finally {
+        if (btnSubmit) btnSubmit.disabled = false;
+      }
+    });
+  }
+});
+
