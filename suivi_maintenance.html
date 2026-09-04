@@ -675,6 +675,9 @@
 
 <!-- AJOUR DE NOTIFICATION SONOR-->
 
+
+
+ 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -945,33 +948,6 @@
 
       rechargerPuzzles();
     });
-
-    // Demander la permission d'envoyer des notifications système
-if ("Notification" in window && Notification.permission !== "granted") {
-  Notification.requestPermission();
-}
-
-// Dans l'écouteur Supabase Realtime :
-_supabase
-  .channel('public:demandes')
-  .on('postgres_changes', { event: '*', schema: 'public', table: 'demandes' }, (payload) => {
-    if (payload.eventType === 'INSERT') {
-      // 1. Essayer de jouer le son
-      notificationAudio.currentTime = 0;
-      notificationAudio.play().catch(() => {});
-
-      // 2. Si la page est en arrière-plan, afficher une notification système
-      if (document.hidden && Notification.permission === "granted") {
-        new Notification("🚨 Nouvelle demande de maintenance !", {
-          body: `Appareil : ${payload.new.appareil} - Service : ${payload.new.service}`,
-          icon: "icon.png" // Optionnel
-        });
-      }
-    }
-    rechargerPuzzles();
-  })
-  .subscribe();
   </script>
 </body>
 </html>
-
