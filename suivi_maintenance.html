@@ -691,6 +691,7 @@
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 3000; justify-content: center; align-items: center; }
     .modal-content { background: white; padding: 24px; border-radius: 8px; max-width: 500px; width: 90%; }
     .empty-msg { font-size: 13px; color: #94a3b8; text-align: center; padding: 20px 0; }
+    .audio-banner { background: #fef3c7; color: #92400e; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 13px; text-align: center; border: 1px solid #fcd34d; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -709,6 +710,10 @@
   </nav>
 
   <main class="container" style="margin-top: 80px;">
+    <div id="audio-unlock-banner" class="audio-banner">
+      🔔 <strong>Cliquez n'importe où sur cette page</strong> pour activer l'alerte sonore automatique des nouvelles demandes.
+    </div>
+
     <h1>Espace Suivi & Traitement des Demandes</h1>
 
     <div class="puzzle-grid">
@@ -767,7 +772,6 @@
     </div>
   </div>
 
-  <!-- Client CDN Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = 'https://vsgfzsaswssepxcwflxi.supabase.co';
@@ -775,13 +779,31 @@
 
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Initialisation du fichier audio pour la notification
+    // Charger le fichier sonore
     const notificationAudio = new Audio('notification.wav');
+    let audioUnlocked = false;
+
+    // Fonction de déblocage audio au premier clic utilisateur
+    function unlockAudio() {
+      if (!audioUnlocked) {
+        notificationAudio.play().then(() => {
+          notificationAudio.pause();
+          notificationAudio.currentTime = 0;
+          audioUnlocked = true;
+          const banner = document.getElementById('audio-unlock-banner');
+          if (banner) banner.style.display = 'none';
+        }).catch(err => {
+          console.warn("Échec du déblocage audio :", err);
+        });
+      }
+    }
+
+    document.addEventListener('click', unlockAudio, { once: true });
+    document.addEventListener('touchstart', unlockAudio, { once: true });
 
     document.addEventListener('DOMContentLoaded', () => {
       const modal = document.getElementById('modal-traitement');
 
-      // Chargement et affichage des demandes depuis Supabase
       async function rechargerPuzzles() {
         const { data: demandes, error } = await _supabase
           .from('demandes')
@@ -842,7 +864,6 @@
           }
         });
 
-        // Messages si une colonne est vide
         if (countAttente === 0) cAttente.innerHTML = '<div class="empty-msg">Aucune demande en attente</div>';
         if (countEncours === 0) cEncours.innerHTML = '<div class="empty-msg">Aucune demande en cours</div>';
         if (countTraitees === 0) cTraitees.innerHTML = '<div class="empty-msg">Aucune demande traitée</div>';
@@ -861,7 +882,6 @@
 
       document.getElementById('btn-fermer-modal').addEventListener('click', () => modal.style.display = 'none');
 
-      // Soumission du formulaire d'assignation
       document.getElementById('form-assignation').addEventListener('submit', async (e) => {
         e.preventDefault();
         const id = document.getElementById('modal-demande-id').value;
@@ -887,7 +907,6 @@
         rechargerPuzzles();
       });
 
-      // Changement direct de statut (Mise en attente ou Marquer Traité)
       window.changerStatut = async function(id, nouveauStatut) {
         const { error } = await _supabase
           .from('demandes')
@@ -902,7 +921,6 @@
         rechargerPuzzles();
       };
 
-      // Déconnexion
       const logoutBtn = document.getElementById('btn-logout');
       if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
@@ -911,20 +929,20 @@
         });
       }
 
-      // Synchronisation en temps réel avec Supabase Realtime et alerte sonore
+      // Écouteur Realtime Supabase
       _supabase
         .channel('public:demandes')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'demandes' }, (payload) => {
           if (payload.eventType === 'INSERT') {
+            notificationAudio.currentTime = 0;
             notificationAudio.play().catch(err => {
-              console.warn("Lecture audio bloquée par le navigateur :", err);
+              console.warn("L'autofocus audio requiert un clic préalable :", err);
             });
           }
           rechargerPuzzles();
         })
         .subscribe();
 
-      // Chargement initial
       rechargerPuzzles();
     });
   </script>
