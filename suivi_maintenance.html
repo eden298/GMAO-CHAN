@@ -973,7 +973,7 @@
       }
 
       // Écouteur Realtime Supabase
-      _supabase
+      /* _supabase
         .channel('public:demandes')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'demandes' }, (payload) => {
           if (payload.eventType === 'INSERT') {
@@ -988,7 +988,28 @@
         .subscribe();
 
       rechargerPuzzles();
-    });
+    }); */
+
+      // Écouteur Realtime Supabase avec journalisation de reconnexion
+      _supabase
+        .channel('public:demandes')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'demandes' }, (payload) => {
+          if (payload.eventType === 'INSERT') {
+            // Force la réinitialisation de l'audio avant lecture
+            notificationAudio.pause();
+            notificationAudio.currentTime = 0;
+            
+            notificationAudio.play().catch(err => {
+              console.warn("L'audio est bloqué par le navigateur. Cliquez sur la page :", err);
+            });
+
+            afficherAlerteVisuelle(payload.new);
+          }
+          rechargerPuzzles();
+        })
+        .subscribe((status) => {
+          console.log("Statut de connexion Supabase Realtime :", status);
+        });
   </script>
 </body>
 </html>
