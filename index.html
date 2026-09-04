@@ -346,6 +346,80 @@
       })
       .subscribe();
   </script>
+
+ <!-- ALERT VUSUELLE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://vsgfzsaswssepxcwflxi.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_XezzMTb-CHRLnYXub7qfiw_KEgmtmYt';
+
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const notificationAudio = new Audio('notification.wav');
+    let audioUnlocked = false;
+
+    function unlockAudio() {
+      if (!audioUnlocked) {
+        notificationAudio.play().then(() => {
+          notificationAudio.pause();
+          notificationAudio.currentTime = 0;
+          audioUnlocked = true;
+        }).catch(err => console.warn("Échec du déblocage audio :", err));
+      }
+    }
+
+    document.addEventListener('click', unlockAudio, { once: true });
+    document.addEventListener('touchstart', unlockAudio, { once: true });
+
+    function afficherAlerteVisuelle(demande) {
+      const ancienneAlerte = document.getElementById('alerte-nouvelle-demande');
+      if (ancienneAlerte) ancienneAlerte.remove();
+
+      const alerte = document.createElement('div');
+      alerte.id = 'alerte-nouvelle-demande';
+      alerte.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #0284c7;
+        color: white;
+        padding: 16px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        z-index: 9999;
+        font-family: sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        max-width: 380px;
+      `;
+
+      alerte.innerHTML = `
+        <span style="font-size: 24px;">🚨</span>
+        <div style="flex: 1;">
+          <strong style="display: block; font-size: 14px;">Nouvelle demande en attente !</strong>
+          <small style="font-size: 12px; opacity: 0.9;">Appareil : ${demande.appareil || 'N/A'} (${demande.service || 'N/A'})</small>
+        </div>
+        <button onclick="this.parentElement.remove()" style="background: transparent; border: none; color: white; font-weight: bold; cursor: pointer; font-size: 16px;">✕</button>
+      `;
+
+      document.body.appendChild(alerte);
+
+      setTimeout(() => {
+        if (alerte && alerte.parentElement) {
+          alerte.remove();
+        }
+      }, 60000);
+    }
+
+    _supabase
+      .channel('public:demandes_accueil')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'demandes' }, (payload) => {
+        notificationAudio.currentTime = 0;
+        notificationAudio.play().catch(err => console.warn("Erreur audio :", err));
+        afficherAlerteVisuelle(payload.new);
+      })
+      .subscribe();
+  </script>
 </body>
 </body>
 </html>
