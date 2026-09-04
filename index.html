@@ -307,5 +307,45 @@
   </main>
 
   <script src="script.js" defer></script>
+
+  <!-- NOTIFICATION SONOR -->
+  <!-- Client CDN Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://vsgfzsaswssepxcwflxi.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_XezzMTb-CHRLnYXub7qfiw_KEgmtmYt';
+
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Charger le fichier sonore
+    const notificationAudio = new Audio('notification.wav');
+    let audioUnlocked = false;
+
+    // Déblocage audio au premier clic sur la page Accueil
+    function unlockAudio() {
+      if (!audioUnlocked) {
+        notificationAudio.play().then(() => {
+          notificationAudio.pause();
+          notificationAudio.currentTime = 0;
+          audioUnlocked = true;
+        }).catch(err => console.warn("Échec du déblocage audio :", err));
+      }
+    }
+
+    document.addEventListener('click', unlockAudio, { once: true });
+    document.addEventListener('touchstart', unlockAudio, { once: true });
+
+    // Écoute des nouvelles demandes en temps réel depuis l'Accueil
+    _supabase
+      .channel('public:demandes_accueil')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'demandes' }, (payload) => {
+        notificationAudio.currentTime = 0;
+        notificationAudio.play().catch(err => {
+          console.warn("L'autofocus audio requiert un clic préalable :", err);
+        });
+      })
+      .subscribe();
+  </script>
+</body>
 </body>
 </html>
