@@ -1,3 +1,104 @@
+<!--
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique des Demandes - Service Odontologie | CHAN</title>
+    <link rel="stylesheet" href="odonto2.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="badge-service">Odontologie</span>
+            <h2>Plateforme CHAN</h2>
+        </div>
+        <div class="nav-menu">
+            <a href="odonto2.html" class="nav-link">🏠 Accueil</a>
+            <a href="materiel.html" class="nav-link">🛠️ Espace Matériel</a>
+            <a href="demande.html" class="nav-link">📝 Demander une Intervention</a>
+            <a href="historique_demandes.html" class="nav-link active">📋 Historique Demandes</a>
+        </div>
+        <div class="nav-user">
+            <div class="user-info">
+                <span id="user-name">Chargement...</span>
+                <small id="user-role">Service Odontologie</small>
+            </div>
+            <button id="btn-logout" class="btn-logout">Déconnexion</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <div>
+                <h1>Historique des Demandes d'Intervention</h1>
+                <p>Consultez et suivez l'état de toutes les alertes de maintenance émises par le service.</p>
+            </div>
+            <div>
+                <a href="demande.html" class="btn btn-primary">+ Nouvelle Demande</a>
+            </div>
+        </header>
+
+        <!-- Barre de recherche instantanée --
+        <div class="filter-bar">
+            <div class="filter-group" style="flex: 2;">
+                <label for="search-input">🔍 Recherche automatique :</label>
+                <input type="text" id="search-input" placeholder="Rechercher par équipement, demandeur, N° ticket, type de panne...">
+            </div>
+            <div class="filter-group">
+                <label for="filter-statut">Filtrer par Statut :</label>
+                <select id="filter-statut">
+                    <option value="">Tous les statuts</option>
+                    <option value="En attente">En attente</option>
+                    <option value="En cours">En cours</option>
+                    <option value="Traité">Traité</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filter-urgence">Urgence :</label>
+                <select id="filter-urgence">
+                    <option value="">Toutes urgences</option>
+                    <option value="Critique">Critique</option>
+                    <option value="Moyenne">Moyenne</option>
+                    <option value="Faible">Faible</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Tableau d'historique --
+        <section class="table-card">
+            <div class="table-header">
+                <h3>Liste des Demandes (<span id="total-count">0</span>)</h3>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>N° Ticket</th>
+                            <th>Date</th>
+                            <th>Demandeur</th>
+                            <th>Équipement</th>
+                            <th>Type Panne</th>
+                            <th>Urgence</th>
+                            <th>Statut</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-historique">
+                        <!-- Généré dynamiquement via JS --
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script src="historique.js"></script>
+</body>
+</html>
+-->
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -93,6 +194,14 @@
         </section>
     </div>
 
+    <!-- Client CDN Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://vsgfzsaswssepxcwflxi.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_XezzMTb-CHRLnYXub7qfiw_KEgmtmYt';
+
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
     <script src="historique.js"></script>
 </body>
 </html>
