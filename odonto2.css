@@ -470,7 +470,7 @@ td { padding: 12px; border-bottom: 1px solid var(--border-color); color: var(--t
 
 /* BOUTONS */
 .btn { padding: 8px 14px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
-.btn-primary { background: var(--primary); color: white; }
+.btn-primary { background: var(--primary);background-color: rgb(1, 20, 104) ; color: rgb(255, 255, 255) }
 .btn-primary:hover { background: var(--primary-hover); }
 .btn-secondary { background: #e2e8f0; color: #334155; }
 .btn-secondary:hover { background: #cbd5e1; }
