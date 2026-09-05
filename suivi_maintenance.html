@@ -884,7 +884,7 @@
             div.addEventListener('click', () => ouvrirModal(d));
             cAttente.appendChild(div);
           } 
-          else if (st === 'en cours') {
+          /*else if (st === 'en cours') {
             countEncours++;
             div.innerHTML = `
               <strong>${d.id} - ${d.appareil}</strong>
@@ -895,7 +895,28 @@
               </div>
             `;
             cEncours.appendChild(div);
-          } 
+          } */
+          else if (st === 'en cours') {
+                  countEncours++;
+                  
+                  // Le bouton Marquer Traité s'affiche UNIQUEMENT si le Major a déjà cliqué sur "Signaler traité"
+                  let boutonTraiterHtml = '';
+                  if (d.signale_traite) {
+                    boutonTraiterHtml = `<button class="btn btn-primary" style="font-size: 10px; padding: 4px; background: #16a34a;" onclick="changerStatut('${d.id}', 'Traité')">✅ Marquer Traité</button>`;
+                  } else {
+                    boutonTraiterHtml = `<span style="font-size:10px; color:#64748b; align-self:center;">En attente de signalement Major</span>`;
+                  }
+                
+                  div.innerHTML = `
+                    <strong>${d.id} - ${d.appareil}</strong>
+                    <p><small>Secteur: ${d.secteur || 'Non assigné'} | Tech: ${d.technicien_nom || 'Non assigné'}</small></p>
+                    <div style="margin-top: 8px; display: flex; gap: 5px; align-items:center;">
+                      <button class="btn btn-secondary" style="font-size: 10px; padding: 4px;" onclick="changerStatut('${d.id}', 'En attente')">↩ Mettre en attente</button>
+                      ${boutonTraiterHtml}
+                    </div>
+                  `;
+                  cEncours.appendChild(div);
+                } 
           else if (st === 'traité' || st === 'traite') {
             countTraitees++;
             div.innerHTML = `
