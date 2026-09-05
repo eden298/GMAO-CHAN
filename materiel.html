@@ -255,13 +255,14 @@
 
 -->
 
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventaire Équipements - Service Odontologie | CHAN</title>
-    <link rel="stylesheet" href="odonto2.css">
+    <link rel="stylesheet" href="odonto.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -329,7 +330,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>➕ Ajouter un Nouvel Équipement</h3>
-                <button id="btn-close-modal" class="btn-close">&times;</button>
+                <button type="button" id="btn-close-modal" class="btn-close">&times;</button>
             </div>
             <form id="form-ajout-materiel" class="form-grid-modal">
                 <div class="form-group">
@@ -366,7 +367,7 @@
                 </div>
                 <div class="form-actions-modal">
                     <button type="button" id="btn-cancel-modal" class="btn btn-secondary">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Enregistrer l'appareil</button>
+                    <button type="submit" id="btn-save-modal" class="btn btn-primary">Enregistrer l'appareil</button>
                 </div>
             </form>
         </div>
