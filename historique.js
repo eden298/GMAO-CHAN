@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 */
 
-/*AJOUT COLLONE BOUTON SIGNALER TRAITE*/
+/*AJOUT COLLONE BOUTON SIGNALER TRAITE*
 
 function verifierAcces() {
   const sessionData = localStorage.getItem('chan_session');
@@ -324,6 +324,245 @@ document.addEventListener('DOMContentLoaded', async () => {
   function afficherDemandes(liste) {
     tbody.innerHTML = '';
     totalCount.textContent = liste.length;
+
+    if (liste.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #64748b; padding: 20px;">Aucune demande trouvée.</td></tr>`;
+      return;
+    }
+
+    liste.forEach((item) => {
+      const tr = document.createElement('tr');
+
+      // Badge d'urgence
+      let classUrgence = 'badge-other';
+      if (item.urgence === 'Critique') classUrgence = 'badge-red';
+      else if (item.urgence === 'Moyenne') classUrgence = 'badge-purple';
+      else if (item.urgence === 'Faible') classUrgence = 'badge-blue';
+
+      // Badge de statut
+      let classStatut = 'badge-other';
+      const st = (item.statut || '').toLowerCase().trim();
+      if (st === 'en attente') classStatut = 'badge-red';
+      else if (st === 'en cours') classStatut = 'badge-purple';
+      else if (st === 'traité' || st === 'traite') classStatut = 'badge-green';
+
+      const typePanneAffichage = item.type_panne || item.typePanne || '-';
+
+      // Gestion du bouton d'action selon l'état
+      let actionHtml = '-';
+      if (st === 'en cours') {
+        if (item.signale_traite) {
+          actionHtml = `<span style="color:#2563eb; font-size:12px; font-weight:600;">⏳ Signalé (En attente confirmation)</span>`;
+        } else {
+          actionHtml = `<button onclick="signalerCommeTraite('${item.id}')" class="btn" style="background:#0284c7; color:white; padding:4px 8px; font-size:11px; border:none; border-radius:4px; cursor:pointer;">📩 Signaler traité</button>`;
+        }
+      } else if (st === 'traité' || st === 'traite') {
+        actionHtml = `<span style="color:#16a34a; font-size:12px; font-weight:600;">✅ Validé</span>`;
+      }
+
+      tr.innerHTML = `
+        <td><strong>${item.id}</strong></td>
+        <td>${item.date || '-'}</td>
+        <td>${item.demandeur || '-'}</td>
+        <td><strong>${item.appareil || '-'}</strong></td>
+        <td>${typePanneAffichage}</td>
+        <td><span class="badge ${classUrgence}">${item.urgence || '-'}</span></td>
+        <td><span class="badge ${classStatut}">${item.statut || 'En attente'}</span></td>
+        <td title="${item.description}">${item.description ? item.description.substring(0, 45) + (item.description.length > 45 ? '...' : '') : '-'}</td>
+        <td>${actionHtml}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Fonction de filtrage automatique
+  function filtrer() {
+    const query = searchInput.value.toLowerCase().trim();
+    const selectedStatut = filterStatut.value;
+    const selectedUrgence = filterUrgence.value;
+
+    const resultats = demandes.filter((item) => {
+      const typePanneAffichage = item.type_panne || item.typePanne || '';
+      const matchText = (
+        (item.id && item.id.toLowerCase().includes(query)) ||
+        (item.appareil && item.appareil.toLowerCase().includes(query)) ||
+        (item.demandeur && item.demandeur.toLowerCase().includes(query)) ||
+        (typePanneAffichage && typePanneAffichage.toLowerCase().includes(query)) ||
+        (item.description && item.description.toLowerCase().includes(query)) ||
+        (item.date && item.date.includes(query))
+      );
+
+      const matchStatut = selectedStatut === '' || item.statut === selectedStatut;
+      const matchUrgence = selectedUrgence === '' || item.urgence === selectedUrgence;
+
+      return matchText && matchStatut && matchUrgence;
+    });
+
+    afficherDemandes(resultats);
+  }
+
+  searchInput.addEventListener('input', filtrer);
+  filterStatut.addEventListener('change', filtrer);
+  filterUrgence.addEventListener('change', filtrer);
+
+  _supabase
+    .channel('public:demandes_historique')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'demandes' }, () => {
+      chargerDemandes();
+    })
+    .subscribe();
+
+  chargerDemandes();
+});
+
+*/
+
+//MISE A JOUR GRAPHIQUE
+
+function verifierAcces() {
+  const sessionData = localStorage.getItem('chan_session');
+  if (!sessionData) {
+    window.location.href = 'login.html';
+    return null;
+  }
+  return JSON.parse(sessionData);
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const user = verifierAcces();
+  if (user) {
+    document.getElementById('user-name').textContent = user.nom || 'Utilisateur';
+    document.getElementById('user-role').textContent = user.service === 'SUPERIEUR' ? 'Accès Direction Supérieure' : 'Responsable Odontologie';
+  }
+
+  const logoutBtn = document.getElementById('btn-logout');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('chan_session');
+      window.location.href = 'login.html';
+    });
+  }
+
+  const tbody = document.getElementById('tbody-historique');
+  const searchInput = document.getElementById('search-input');
+  const filterStatut = document.getElementById('filter-statut');
+  const filterUrgence = document.getElementById('filter-urgence');
+  const totalCount = document.getElementById('total-count');
+
+  let demandes = [];
+  let chartUrgences = null;
+  let chartStatuts = null;
+
+  // Initialisation et mise à jour des Graphiques Chart.js
+  function mettreAJourGraphiques(liste) {
+    // Compteurs pour Urgences
+    let critique = 0, moyenne = 0, faible = 0;
+    // Compteurs pour Statuts
+    let enAttente = 0, enCours = 0, traite = 0;
+
+    liste.forEach((item) => {
+      // Urgence
+      const urg = (item.urgence || '').toLowerCase();
+      if (urg === 'critique') critique++;
+      else if (urg === 'moyenne') moyenne++;
+      else if (urg === 'faible') faible++;
+
+      // Statut
+      const st = (item.statut || '').toLowerCase().trim();
+      if (st === 'en attente') enAttente++;
+      else if (st === 'en cours') enCours++;
+      else if (st === 'traité' || st === 'traite') traite++;
+    });
+
+    // 1. Chart Urgences
+    const ctxUrg = document.getElementById('chart-urgences').getContext('2d');
+    if (chartUrgences) chartUrgences.destroy();
+    chartUrgences = new Chart(ctxUrg, {
+      type: 'doughnut',
+      data: {
+        labels: ['Critique', 'Moyenne', 'Faible'],
+        datasets: [{
+          data: [critique, moyenne, faible],
+          backgroundColor: ['#ef4444', '#a855f7', '#3b82f6']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' }
+        }
+      }
+    });
+
+    // 2. Chart Statuts
+    const ctxStat = document.getElementById('chart-statuts').getContext('2d');
+    if (chartStatuts) chartStatuts.destroy();
+    chartStatuts = new Chart(ctxStat, {
+      type: 'doughnut',
+      data: {
+        labels: ['En attente', 'En cours', 'Traité'],
+        datasets: [{
+          data: [enAttente, enCours, traite],
+          backgroundColor: ['#f43f5e', '#8b5cf6', '#10b981']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom' }
+        }
+      }
+    });
+  }
+
+  // Fonction de chargement depuis Supabase
+  async function chargerDemandes() {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #64748b; padding: 20px;">Chargement des données...</td></tr>`;
+
+    try {
+      const { data, error } = await _supabase
+        .from('demandes')
+        .select('*')
+        .eq('service', 'Odontologie')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      demandes = data || [];
+      filtrer();
+    } catch (err) {
+      console.error('Erreur lors de la récupération Supabase :', err.message);
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #dc2626; padding: 20px;">Erreur de chargement des données.</td></tr>`;
+    }
+  }
+
+  // Fonction pour signaler le traitement par le Major
+  window.signalerCommeTraite = async function(id) {
+    if (!confirm("Voulez-vous vraiment signaler au service maintenance que cette intervention est terminée ?")) return;
+
+    try {
+      const { error } = await _supabase
+        .from('demandes')
+        .update({ signale_traite: true })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      chargerDemandes();
+    } catch (err) {
+      alert("Erreur lors de la mise à jour : " + err.message);
+    }
+  };
+
+  // Fonction d'affichage du tableau
+  function afficherDemandes(liste) {
+    tbody.innerHTML = '';
+    totalCount.textContent = liste.length;
+
+    // Mise à jour des graphiques avec la liste actuellement affichée/filtrée
+    mettreAJourGraphiques(liste);
 
     if (liste.length === 0) {
       tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #64748b; padding: 20px;">Aucune demande trouvée.</td></tr>`;
