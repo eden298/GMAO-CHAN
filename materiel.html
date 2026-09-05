@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -118,6 +118,137 @@
         </section>
     </div>
 
+    <script src="materiel.js"></script>
+</body>
+</html>
+-->
+
+<!-- MISE A JOUR PAGE MATERIEL -->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventaire Équipements - Service Odontologie | CHAN</title>
+    <link rel="stylesheet" href="odonto2.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="badge-service">Odontologie</span>
+            <h2>Plateforme CHAN</h2>
+        </div>
+        <div class="nav-menu">
+            <a href="odonto2.html" class="nav-link">🏠 Accueil</a>
+            <a href="materiel.html" class="nav-link active">🛠️ Espace Matériel</a>
+            <a href="demande.html" class="nav-link">📝 Demander une Intervention</a>
+            <a href="historique_demandes.html" class="nav-link">📋 Historique Demandes</a>
+        </div>
+        <div class="nav-user">
+            <div class="user-info">
+                <span id="user-name">Chargement...</span>
+                <small id="user-role">Service Odontologie</small>
+            </div>
+            <button id="btn-logout" class="btn-logout">Déconnexion</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <div>
+                <h1>Inventaire & État du Parc Matériel</h1>
+                <p>Base de données des équipements et dispositifs médicaux du service d'odontologie.</p>
+            </div>
+            <div class="header-actions" style="display: flex; gap: 10px;">
+                <button id="btn-toggle-edit" class="btn btn-secondary">✏️ Modifier les données</button>
+                <button id="btn-open-modal" class="btn btn-primary">+ Ajouter un appareil</button>
+            </div>
+        </header>
+
+        <section class="table-card">
+            <div class="table-header">
+                <h3>Base de Données des Appareils</h3>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Code Appareil</th>
+                            <th>Nom de l'Équipement</th>
+                            <th>Marque</th>
+                            <th>Modèle</th>
+                            <th>Localisation</th>
+                            <th>État Fonctionnel</th>
+                            <th>Dernière Maintenance</th>
+                            <th class="col-actions-header" style="display: none;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-materiel">
+                        <!-- Généré dynamiquement via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- MODALE D'AJOUT D'ÉQUIPEMENT -->
+    <div id="modal-ajout" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Ajouter un Nouvel Équipement</h3>
+                <button id="btn-close-modal" class="btn-close">&times;</button>
+            </div>
+            <form id="form-ajout-materiel" class="form-grid" style="margin-top: 15px;">
+                <div class="form-group">
+                    <label for="add-code">Code Appareil *</label>
+                    <input type="text" id="add-code" placeholder="ex: EQP-OD-007" required>
+                </div>
+                <div class="form-group">
+                    <label for="add-nom">Nom de l'Équipement *</label>
+                    <input type="text" id="add-nom" placeholder="ex: Scanner Intra-oral" required>
+                </div>
+                <div class="form-group">
+                    <label for="add-marque">Marque</label>
+                    <input type="text" id="add-marque" placeholder="ex: Carestream">
+                </div>
+                <div class="form-group">
+                    <label for="add-modele">Modèle</label>
+                    <input type="text" id="add-modele" placeholder="ex: CS 3600">
+                </div>
+                <div class="form-group">
+                    <label for="add-localisation">Localisation</label>
+                    <input type="text" id="add-localisation" placeholder="ex: Salle A">
+                </div>
+                <div class="form-group">
+                    <label for="add-etat">État Fonctionnel</label>
+                    <select id="add-etat">
+                        <option value="Opérationnel">Opérationnel</option>
+                        <option value="En Panne">En Panne</option>
+                        <option value="Sous Maintenance">Sous Maintenance</option>
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <label for="add-maintenance">Dernière Maintenance</label>
+                    <input type="date" id="add-maintenance">
+                </div>
+                <div class="form-group full-width form-actions" style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button type="button" id="btn-cancel-modal" class="btn btn-secondary" style="flex: 1;">Annuler</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Enregistrer dans le Cloud</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Client CDN Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://vsgfzsaswssepxcwflxi.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_XezzMTb-CHRLnYXub7qfiw_KEgmtmYt';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
     <script src="materiel.js"></script>
 </body>
 </html>
