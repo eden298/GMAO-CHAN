@@ -58,7 +58,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Charger les équipements depuis Supabase Cloud
     async function chargerMateriel() {
         tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #64748b; padding: 20px;">Chargement des équipements...</td></tr>`;
-
         try {
             const { data, error } = await _supabase
                 .from('materiels')
@@ -66,7 +65,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .order('code_appareil', { ascending: true });
 
             if (error) throw error;
-
             listeMateriel = data || [];
             afficherMateriel();
         } catch (err) {
@@ -90,7 +88,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const tr = document.createElement('tr');
             const isEditing = (editingRowId === item.id);
 
-            // Badges d'état
             let classEtat = 'badge-other';
             const etat = item.etat_fonctionnel || 'Opérationnel';
             if (etat === 'En Panne') classEtat = 'badge-red';
@@ -98,7 +95,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             else if (etat === 'Sous Maintenance') classEtat = 'badge-purple';
 
             if (isEditing) {
-                // Mode édition sur cette ligne
                 tr.innerHTML = `
                     <td><input type="text" id="edit-code-${item.id}" value="${item.code_appareil || ''}" style="width: 100%;"></td>
                     <td><input type="text" id="edit-nom-${item.id}" value="${item.nom_equipement || ''}" style="width: 100%;"></td>
@@ -119,14 +115,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </td>
                 `;
             } else {
-                // Mode affichage normal
                 let actionTd = isEditMode ? `
                     <td>
                         <button onclick="activerEditionLigne('${item.id}')" class="btn btn-primary" style="padding:4px 8px; font-size:11px;">✏️ Modifier</button>
                         <button onclick="supprimerAppareil('${item.id}')" class="btn" style="background:#dc2626; color:white; padding:4px 8px; font-size:11px; margin-left:2px;">🗑️</button>
                     </td>
                 ` : '';
-
                 tr.innerHTML = `
                     <td><code>${item.code_appareil || '-'}</code></td>
                     <td><strong>${item.nom_equipement || '-'}</strong></td>
@@ -138,7 +132,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     ${actionTd}
                 `;
             }
-
             tbody.appendChild(tr);
         });
     }
@@ -152,19 +145,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         afficherMateriel();
     });
 
-    // Activer l'édition sur une ligne spécifique
     window.activerEditionLigne = function(id) {
         editingRowId = id;
         afficherMateriel();
     };
 
-    // Annuler l'édition en cours
     window.annulerEdition = function() {
         editingRowId = null;
         afficherMateriel();
     };
 
-    // Valider et sauvegarder les modifications dans Cloud Supabase
     window.validerModification = async function(id) {
         const payload = {
             code_appareil: document.getElementById(`edit-code-${id}`).value.trim(),
@@ -183,18 +173,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .eq('id', id);
 
             if (error) throw error;
-
             editingRowId = null;
             chargerMateriel();
         } catch (err) {
-            alert('Erreur lors de la mise à jour Cloud : ' + err.message);
+            alert('Erreur lors de la mise à jour : ' + err.message);
         }
     };
 
-    // Supprimer un appareil
     window.supprimerAppareil = async function(id) {
-        if (!confirm('Voulez-vous vraiment supprimer cet appareil de la base de données ?')) return;
-
+        if (!confirm('Voulez-vous vraiment supprimer cet appareil ?')) return;
         try {
             const { error } = await _supabase
                 .from('materiels')
@@ -202,17 +189,26 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .eq('id', id);
 
             if (error) throw error;
-
             chargerMateriel();
         } catch (err) {
             alert('Erreur lors de la suppression : ' + err.message);
         }
     };
 
-    // Gestion de la fenêtre Modale d'ajout
-    btnOpenModal.addEventListener('click', () => modalAjout.style.display = 'flex');
-    btnCloseModal.addEventListener('click', () => modalAjout.style.display = 'none');
-    btnCancelModal.addEventListener('click', () => modalAjout.style.display = 'none');
+    // Gestion de la fermeture/ouverture de la Modale
+    function fermerModale() {
+        modalAjout.style.display = 'none';
+        formAjout.reset();
+    }
+
+    if (btnOpenModal) btnOpenModal.addEventListener('click', () => modalAjout.style.display = 'flex');
+    if (btnCloseModal) btnCloseModal.addEventListener('click', fermerModale);
+    if (btnCancelModal) btnCancelModal.addEventListener('click', fermerModale);
+
+    // Fermeture lors d'un clic en dehors du rectangle blanc
+    window.addEventListener('click', (e) => {
+        if (e.target === modalAjout) fermerModale();
+    });
 
     // Envoi du formulaire d'ajout vers Supabase
     formAjout.addEventListener('submit', async (e) => {
@@ -241,15 +237,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (error) throw error;
 
-            formAjout.reset();
-            modalAjout.style.display = 'none';
+            fermerModale();
             chargerMateriel();
         } catch (err) {
             alert("Erreur lors de l'ajout dans Supabase : " + err.message);
         }
     });
 
-    // Écoute en temps réel de la base Supabase
+    // Écoute en temps réel de Supabase
     _supabase
         .channel('public:materiels')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'materiels' }, () => {
