@@ -142,6 +142,7 @@
 
 */
 
+/* Le fond sombre de la modale */
 .modal-overlay {
     position: fixed !important;
     top: 0 !important;
@@ -150,14 +151,18 @@
     height: 100vh !important;
     background-color: rgba(15, 23, 42, 0.6) !important;
     backdrop-filter: blur(4px);
-    z-index: 99999 !important;
+    z-index: 999999 !important; /* Supérieur à tout le reste */
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
     padding: 20px;
+    pointer-events: auto !important; /* Capture le clic */
 }
 
+/* La boite blanche de la modale */
 .modal-content {
+    position: relative !important;
+    z-index: 1000000 !important; /* Toujours au-dessus de l'overlay */
     background: #ffffff !important;
     border-radius: 16px !important;
     width: 100% !important;
@@ -165,8 +170,9 @@
     max-height: 90vh !important;
     overflow-y: auto !important;
     padding: 28px !important;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3) !important;
     border: 1px solid #e2e8f0;
+    pointer-events: auto !important; /* Assure le clic sur les champs/boutons */
 }
 
 .modal-header {
@@ -185,18 +191,21 @@
     margin: 0;
 }
 
+/* Style de la croix */
 .btn-close {
-    background: transparent;
-    border: none;
-    font-size: 24px;
-    font-weight: bold;
-    cursor: pointer;
-    color: #64748b;
-    padding: 4px 8px;
+    background: transparent !important;
+    border: none !important;
+    font-size: 28px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    color: #64748b !important;
+    padding: 4px 8px !important;
+    line-height: 1 !important;
+    z-index: 1000001 !important;
 }
 
 .btn-close:hover {
-    color: #dc2626;
+    color: #dc2626 !important;
 }
 
 .form-grid-modal {
@@ -240,4 +249,9 @@
     margin-top: 16px !important;
     padding-top: 16px !important;
     border-top: 1px solid #e2e8f0;
+}
+
+.form-actions-modal button {
+    cursor: pointer !important;
+    z-index: 1000001 !important;
 }
