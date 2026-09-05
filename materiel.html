@@ -457,70 +457,100 @@
         </section>
     </div>
 
-    <!-- MODALE D'AJOUT -->
-    <div id="modal-ajout" class="modal-overlay" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>➕ Ajouter un Nouvel Équipement</h3>
-                <button type="button" id="btn-close-modal" class="btn-close" onclick="fermerModalSecours()">&times;</button>
-            </div>
-            <form id="form-ajout-materiel" class="form-grid-modal">
-                <div class="form-group">
-                    <label for="add-code">Code Appareil *</label>
-                    <input type="text" id="add-code" placeholder="ex: EQP-OD-007" required>
-                </div>
-                <div class="form-group">
-                    <label for="add-nom">Nom de l'Équipement *</label>
-                    <input type="text" id="add-nom" placeholder="ex: Scanner Intra-oral" required>
-                </div>
-                <div class="form-group">
-                    <label for="add-marque">Marque</label>
-                    <input type="text" id="add-marque" placeholder="ex: Carestream">
-                </div>
-                <div class="form-group">
-                    <label for="add-modele">Modèle</label>
-                    <input type="text" id="add-modele" placeholder="ex: CS 3600">
-                </div>
-                <div class="form-group">
-                    <label for="add-localisation">Localisation</label>
-                    <input type="text" id="add-localisation" placeholder="ex: Salle A">
-                </div>
-                <div class="form-group">
-                    <label for="add-etat">État Fonctionnel</label>
-                    <select id="add-etat">
-                        <option value="Opérationnel">Opérationnel</option>
-                        <option value="En Panne">En Panne</option>
-                        <option value="Sous Maintenance">Sous Maintenance</option>
-                    </select>
-                </div>
-                <div class="form-group full-width">
-                    <label for="add-maintenance">Dernière Maintenance</label>
-                    <input type="date" id="add-maintenance">
-                </div>
-                <div class="form-actions-modal">
-                    <button type="button" id="btn-cancel-modal" class="btn btn-secondary" onclick="fermerModalSecours()">Annuler</button>
-                    <button type="submit" id="btn-save-modal" class="btn btn-primary">Enregistrer l'appareil</button>
-                </div>
-            </form>
+<!-- MODALE D'AJOUT -->
+<div id="modal-ajout" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>➕ Ajouter un Nouvel Équipement</h3>
+            <!-- Clic direct inline -->
+            <button type="button" class="btn-close" onclick="document.getElementById('modal-ajout').style.display='none'">&times;</button>
         </div>
+        
+        <form id="form-ajout-materiel" class="form-grid-modal" onsubmit="soumettreFormulaireAppareil(event)">
+            <div class="form-group">
+                <label for="add-code">Code Appareil *</label>
+                <input type="text" id="add-code" placeholder="ex: EQP-OD-007" required>
+            </div>
+            <div class="form-group">
+                <label for="add-nom">Nom de l'Équipement *</label>
+                <input type="text" id="add-nom" placeholder="ex: Scanner Intra-oral" required>
+            </div>
+            <div class="form-group">
+                <label for="add-marque">Marque</label>
+                <input type="text" id="add-marque" placeholder="ex: Carestream">
+            </div>
+            <div class="form-group">
+                <label for="add-modele">Modèle</label>
+                <input type="text" id="add-modele" placeholder="ex: CS 3600">
+            </div>
+            <div class="form-group">
+                <label for="add-localisation">Localisation</label>
+                <input type="text" id="add-localisation" placeholder="ex: Salle A">
+            </div>
+            <div class="form-group">
+                <label for="add-etat">État Fonctionnel</label>
+                <select id="add-etat">
+                    <option value="Opérationnel">Opérationnel</option>
+                    <option value="En Panne">En Panne</option>
+                    <option value="Sous Maintenance">Sous Maintenance</option>
+                </select>
+            </div>
+            <div class="form-group full-width">
+                <label for="add-maintenance">Dernière Maintenance</label>
+                <input type="date" id="add-maintenance">
+            </div>
+            <div class="form-actions-modal">
+                <!-- Clic direct inline -->
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('modal-ajout').style.display='none'">Annuler</button>
+                <button type="submit" class="btn btn-primary">Enregistrer l'appareil</button>
+            </div>
+        </form>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const SUPABASE_URL = 'https://vsgfzsaswssepxcwflxi.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_XezzMTb-CHRLnYXub7qfiw_KEgmtmYt';
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+<script>
+// Fonction globale pour l'enregistrement direct
+async function soumettreFormulaireAppareil(e) {
+    e.preventDefault();
+    
+    let dateMaint = document.getElementById('add-maintenance').value;
+    if (dateMaint && dateMaint.includes('-')) {
+        const parts = dateMaint.split('-');
+        if (parts.length === 3) {
+            dateMaint = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+    }
 
-        // Fonctions globales de secours
-        function fermerModalSecours() {
-            const el = document.getElementById('modal-ajout');
-            if (el) el.style.display = 'none';
+    const nouveauMateriel = {
+        code_appareil: document.getElementById('add-code').value.trim(),
+        nom_equipement: document.getElementById('add-nom').value.trim(),
+        marque: document.getElementById('add-marque').value.trim(),
+        modele: document.getElementById('add-modele').value.trim(),
+        localisation: document.getElementById('add-localisation').value.trim(),
+        etat_fonctionnel: document.getElementById('add-etat').value,
+        derniere_maintenance: dateMaint || '-'
+    };
+
+    try {
+        const { error } = await _supabase.from('materiels').insert([nouveauMateriel]);
+        if (error) throw error;
+
+        // Forcer la fermeture et réinitialisation
+        document.getElementById('modal-ajout').style.display = 'none';
+        document.getElementById('form-ajout-materiel').reset();
+        
+        // Recharger les données si la fonction existe
+        if (typeof chargerMateriel === 'function') {
+            chargerMateriel();
+        } else {
+            window.location.reload();
         }
-        function ouvrirModalSecours() {
-            const el = document.getElementById('modal-ajout');
-            if (el) el.style.display = 'flex';
-        }
-    </script>
-    <script src="materiel.js"></script>
+    } catch (err) {
+        alert("Erreur Supabase : " + err.message);
+    }
+}
+</script>
+    
+        <script src="materiel.js"></script>
 </body>
 </html>
