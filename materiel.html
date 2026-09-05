@@ -262,8 +262,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventaire Équipements - Service Odontologie | CHAN</title>
-    <link rel="stylesheet" href="odonto.css"> 
-    <link rel="stylesheet" href="modal.css">
+    <link rel="stylesheet" href="odonto2.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -319,21 +318,21 @@
                         </tr>
                     </thead>
                     <tbody id="tbody-materiel">
-                        <!-- Généré dynamiquement via JS --
+                        <!-- Généré dynamiquement via JS -->
                     </tbody>
                 </table>
             </div>
         </section>
     </div>
 
-    <!-- POPUP / MODALE D'AJOUT --
+    <!-- MODALE D'AJOUT D'ÉQUIPEMENT -->
     <div id="modal-ajout" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>➕ Ajouter un Nouvel Équipement</h3>
-                <button type="button" id="btn-close-modal" class="btn-close">&times;</button>
+                <h3>Ajouter un Nouvel Équipement</h3>
+                <button id="btn-close-modal" class="btn-close">&times;</button>
             </div>
-            <form id="form-ajout-materiel" class="form-grid-modal">
+            <form id="form-ajout-materiel" class="form-grid" style="margin-top: 15px;">
                 <div class="form-group">
                     <label for="add-code">Code Appareil *</label>
                     <input type="text" id="add-code" placeholder="ex: EQP-OD-007" required>
@@ -366,15 +365,15 @@
                     <label for="add-maintenance">Dernière Maintenance</label>
                     <input type="date" id="add-maintenance">
                 </div>
-                <div class="form-actions-modal">
-                    <button type="button" id="btn-cancel-modal" class="btn btn-secondary">Annuler</button>
-                    <button type="submit" id="btn-save-modal" class="btn btn-primary">Enregistrer l'appareil</button>
+                <div class="form-group full-width form-actions" style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button type="button" id="btn-cancel-modal" class="btn btn-secondary" style="flex: 1;">Annuler</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Enregistrer dans le Cloud</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Client CDN Supabase --
+    <!-- Client CDN Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const SUPABASE_URL = 'https://vsgfzsaswssepxcwflxi.supabase.co';
@@ -384,5 +383,3 @@
     <script src="materiel.js"></script>
 </body>
 </html>
-
-
